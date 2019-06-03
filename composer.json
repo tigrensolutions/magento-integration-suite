@@ -19,9 +19,6 @@
         "soap",
         "graphql"
     ],
-    "require": {
-        "magento/framework": ">=102.0.0"
-    },
     "replace": {
         "tigren/module-catalog-graph-ql": "self.version",
         "tigren/module-compare-graph-ql": "self.version",
