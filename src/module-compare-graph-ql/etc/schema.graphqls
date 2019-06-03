@@ -1,0 +1,32 @@
+type Mutation {
+    addToCompare(product: Int!): Boolean @resolver(class: "\\Tigren\\CompareGraphQl\\Model\\Resolver\\Mutation\\AddToCompare") @doc(description:"Add an item to compare")
+    addToCartFromCompare(item: Int!): Boolean @resolver(class: "\\Tigren\\CompareGraphQl\\Model\\Resolver\\Mutation\\AddToCart") @doc(description:"Add an item to cart from compare")
+    removeItemCompare(item: Int!): Boolean @resolver(class: "\\Tigren\\CompareGraphQl\\Model\\Resolver\\Mutation\\RemoveItem") @doc(description:"Remove an item from compare")
+    clearCompare: Boolean @resolver(class: "\\Tigren\\CompareGraphQl\\Model\\Resolver\\Mutation\\ClearCompare") @doc(description:"Clear Compare")
+}
+
+type Query {
+    compare_list : [CompareItem]
+    @resolver(class: "Tigren\\CompareGraphQl\\Model\\Resolver\\Query\\CompareList")
+}
+
+type CompareItem {
+    id : Int
+    sku : String
+    small_image: String
+    url_key: String
+    name: String
+    price: Float
+    currency: String
+    special_price: Float
+    final_price: Float
+    type_id: String
+    description: String
+    is_available: String
+    attributes: [CompareAttribute]
+}
+type CompareAttribute {
+    code : String
+    label : String
+    value : String
+}

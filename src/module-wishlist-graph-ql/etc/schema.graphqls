@@ -1,0 +1,31 @@
+type Mutation {
+    addToWishlist(product: Int!): Boolean @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\AddToWishlist") @doc(description:"Add an item to wishlist")
+    addToCartFromWishlist(item: Int!,qty: Int!): Boolean @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\AddToCart") @doc(description:"Add an item to cart from wishlist")
+    removeItemWishlist(item: Int!): Boolean @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\RemoveItem") @doc(description:"Remove an item from wishlist")
+    addWistlistToCart(items: String!): [Message] @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\AllCart") @doc(description:"Add all wistlist items to cart")
+}
+
+ type Message {
+    type : String @doc(description: "The type of message")
+    text : String @doc(description: "The content of message")
+ }
+
+ type Customer @doc(description: "Customer defines the customer other details") {
+     wishlist: [WishlistItemInterface] @doc(description: "An array containing the customer's order") @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Query\\CustomerWishlist")
+ }
+
+ type WishlistItemInterface {
+     id : Int
+     small_image: String
+     url_key: String
+     name: String
+     qty: Int
+     product_id: Int
+     price: Float
+     currency: String
+     special_price: Float
+     final_price: Float
+     type_id: String
+     description: String
+     is_available: String
+ }

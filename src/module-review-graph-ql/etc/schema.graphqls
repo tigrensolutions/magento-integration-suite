@@ -1,0 +1,30 @@
+interface ProductInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\\ProductInterfaceTypeResolverComposite") @doc(description: "The ProductInterface contains attributes that are common to all types of products. Note that descriptions may not be available for custom and EAV attributes.") {
+    review: Review @resolver(class: "Tigren\\ReviewGraphQl\\Model\\Resolver\\Review")
+}
+
+type Review @doc(description: "define data about review") {
+    rating_summary : Float @doc(description: "Vote of Review")
+    reviews_count : Int @doc(description: "Count Review")
+    items : [ReviewInterface] @doc(description: "interface of review")
+}
+
+type Attribute @doc(description: "define data of an attribute") {
+    label : String
+    code : String
+    value : String
+}
+
+type ReviewInterface @doc(description: "define interface of review") {
+    title: String @doc(description: "Title Review")
+    nickname: String @doc(description: "Nickname Review")
+    detail: String @doc(description: "Detail Review")
+    created_at: String @doc(description: "Created At Review")
+    vote: Float @doc(description: "Vote of Review")
+    ratings: [Rating] @doc(description: "Votes of Review")
+}
+
+type Rating @doc(description: "define data of review") {
+    code: String @doc(description: "The code assigned to a Rating")
+    value: String @doc(description: "Value of Rating")
+    vote: Float @doc(description: "Vote of Rating")
+}
