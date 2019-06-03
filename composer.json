@@ -19,12 +19,6 @@
         "soap",
         "graphql"
     ],
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://repo.magento.com/"
-        }
-    ],
     "require": {
         "magento/framework": ">=102.0.0"
     },
