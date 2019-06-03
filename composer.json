@@ -1,6 +1,6 @@
 {
     "name": "tigrensolutions/magento-integration-suite",
-    "type": "magento2-component",
+    "type": "metapackage",
     "license": "OSL-3.0",
     "authors": [
         {
