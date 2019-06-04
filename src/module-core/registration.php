@@ -5,8 +5,10 @@
  * @license Open Software License ("OSL") v. 3.0
  */
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-    \Magento\Framework\Component\ComponentRegistrar::MODULE,
+use Magento\Framework\Component\ComponentRegistrar;
+
+ComponentRegistrar::register(
+    ComponentRegistrar::MODULE,
     'Tigren_Core',
     __DIR__
 );
