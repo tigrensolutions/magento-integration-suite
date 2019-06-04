@@ -7,7 +7,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="Tigren_Core::tigren" title="Tigren" module="Tigren_Core" sortOrder="100"
+        <add id="Tigren_Core::tigren" title="Tigren" module="Tigren_Core" sortOrder="60"
              resource="Tigren_Core::tigren"/>
         <add id="Tigren_Core::information" title="Information" module="Tigren_Core" sortOrder="0"
              parent="Tigren_Core::tigren" resource="Tigren_Core::settings"
