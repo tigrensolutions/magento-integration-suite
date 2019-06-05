@@ -10,7 +10,7 @@ namespace Tigren\WishlistGraphQl\Model\Resolver\Mutation;
 
 use Exception;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\WishlistGraphQl\Model\Customer\CheckCustomerAccount;
+use Magento\CustomerGraphQl\Model\Customer\CheckCustomerAccount;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Exception\LocalizedException;

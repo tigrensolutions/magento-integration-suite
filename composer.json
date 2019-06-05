@@ -48,7 +48,7 @@
             "Tigren\\QuoteGraphQl\\": "src/module-quote-graph-ql",
             "Tigren\\ReviewGraphQl\\": "src/module-review-graph-ql",
             "Tigren\\StoreGraphQl\\": "src/module-store-graph-ql",
-            "Tigren\\WishlistGraphQl\\": "src/module-wishlists-graph-ql"
+            "Tigren\\WishlistGraphQl\\": "src/module-wishlist-graph-ql"
         }
     },
    "minimum-stability": "dev",

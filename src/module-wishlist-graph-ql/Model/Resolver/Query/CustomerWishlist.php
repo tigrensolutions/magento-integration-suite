@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-namespace Tigren\WishlistGraphQl\Model\Resolver;
+namespace Tigren\WishlistGraphQl\Model\Resolver\Query;
 
 use Magento\Catalog\Helper\Product\Configuration as ProductConfig;
 use Magento\Customer\Model\Customer;
@@ -21,7 +21,7 @@ use Magento\Wishlist\Model\WishlistFactory;
 
 /**
  * Class CustomerWishlist
- * @package Tigren\WishlistGraphQl\Model\Resolver
+ * @package Tigren\WishlistGraphQl\Model\Resolver\Query
  */
 class CustomerWishlist implements ResolverInterface
 {

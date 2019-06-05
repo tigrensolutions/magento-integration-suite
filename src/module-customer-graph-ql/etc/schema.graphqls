@@ -2,7 +2,7 @@ type Query {
     order (
         id: Int! @doc(description: "Id of the order")
     ): CustomOrder
-    @resolver(class: "Tigren\\PwaConnector\\Model\\Graphql\\Resolver\\Sales\\Order")
+    @resolver(class: "Tigren\\CustomerGraphQl\\Model\\Resolver\\Sales\\Order")
 }
 type Mutation {
     assignOrder(order: Int!): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Mutation\\AssignOrder") @doc(description:"Assign order to customer")

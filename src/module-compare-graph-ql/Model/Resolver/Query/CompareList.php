@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-namespace Tigren\CompareGraphQl\Model\Resolver;
+namespace Tigren\CompareGraphQl\Model\Resolver\Query;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;

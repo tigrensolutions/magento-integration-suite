@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Tigren\CatalogGraphQl\Model\Graphql\Resolver\Catalog\Category;
+namespace Tigren\CatalogGraphQl\Model\Graphql\Resolver\Category;
 
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
@@ -24,7 +24,6 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Swatches\Helper\Data as SwatchHelper;
-use Tigren\CatalogGraphQl\Helper\Data;
 
 /**
  * @inheritdoc
@@ -64,10 +63,7 @@ class Filters implements ResolverInterface
      * @var RequestInterface
      */
     protected $_request;
-    /**
-     * @var Data
-     */
-    protected $_helper;
+    
     /**
      * @var Escaper
      */
@@ -104,7 +100,6 @@ class Filters implements ResolverInterface
      * @param CategoryRepositoryInterface $categoryRepository
      * @param CategoryFactory $categoryFactory
      * @param RequestInterface $request
-     * @param Data $helper
      * @param Escaper $escaper
      * @param SwatchHelper $swatchHelper
      */
@@ -113,7 +108,6 @@ class Filters implements ResolverInterface
         CategoryRepositoryInterface $categoryRepository,
         CategoryFactory $categoryFactory,
         RequestInterface $request,
-        Data $helper,
         Escaper $escaper,
         SwatchHelper $swatchHelper
     ) {
@@ -121,7 +115,6 @@ class Filters implements ResolverInterface
         $this->categoryRepository = $categoryRepository;
         $this->categoryFactory = $categoryFactory;
         $this->_request = $request;
-        $this->_helper = $helper;
         $this->_escaper = $escaper;
         $this->swatchHelper = $swatchHelper;
     }
