@@ -1,0 +1,73 @@
+type Query {
+    order (
+        id: Int! @doc(description: "Id of the order")
+    ): CustomOrder
+    @resolver(class: "Tigren\\CustomerGraphQl\\Model\\Resolver\\Sales\\Order")
+}
+type Mutation {
+    assignOrder(order: Int!): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Mutation\\AssignOrder") @doc(description:"Assign order to customer")
+    assignGuestCart(cartId: String!): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Mutation\\AssignGuestCart") @doc(description:"Assign guest cart to customer")
+    reorder(order: Int!): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Mutation\\Reorder") @doc(description:"Reorder")
+    validateLinkToken(token: String!): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Customer\\ValidateLinkToken") @doc(description:"validate customer token")
+    createNewPassword(token: String!,password: String): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Customer\\CreateNewPassword") @doc(description:"create new password")
+ }
+
+ type Message {
+    type : String @doc(description: "The type of message")
+    text : String @doc(description: "The content of message")
+ }
+
+type CustomOrder {
+    increment_id: String @doc(description: "The increment id of the order")
+}
+
+ type Customer @doc(description: "Customer defines the customer other details") {
+     orders: [CustomerOrder] @doc(description: "An array containing the customer's order") @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\CustomerOrder")
+ }
+
+ type CustomerOrder @doc(description: "CustomerOrder contains detailed information about a customer's order"){
+     entity_id: Int @doc(description: "The ID assigned to the order object")
+     increment_id: String @doc(description: "The ID increment assigned to the order object")
+     customer_firstname: String
+     customer_lastname: String
+     grand_total: String
+     subtotal: String
+     status: String
+     created_at: String
+     payment_method: String
+     shipping_description: String
+     shipping_amount: String
+     discount_amount: String
+     billing_address: OrderAddress
+     shipping_address: OrderAddress
+     items: [OrderItem]
+ }
+
+ type OrderItem {
+     id : Int!
+     name: String
+     sku: String
+     price: Float
+     subtotal: Float
+     quantity: Int
+ }
+
+ type OrderAddress @doc(description : "define data address of order") {
+     id: Int @doc(description: "The ID assigned to the address object")
+     customer_id: Int @doc(description: "The customer ID")
+     region: String @doc(description: "The region name")
+     region_id: Int @doc(description: "A number that uniquely identifies the state, province, or other area")
+     country_id: String @doc(description: "The customer's country")
+     street: String @doc(description: "An array of strings that define the street number and name")
+     company: String @doc(description: "The customer's company")
+     telephone: String @doc(description: "The telephone number")
+     fax: String @doc(description: "The fax number")
+     postcode: String @doc(description: "The customer's ZIP or postal code")
+     city: String @doc(description: "The city or town")
+     firstname: String @doc(description: "The first name of the person associated with the shipping/billing address")
+     lastname: String @doc(description: "The family name of the person associated with the shipping/billing address")
+     middlename: String @doc(description: "The middle name of the person associated with the shipping/billing address")
+     prefix: String @doc(description: "An honorific, such as Dr., Mr., or Mrs.")
+     suffix: String @doc(description: "A value such as Sr., Jr., or III")
+     vat_id: String @doc(description: "The customer's Tax/VAT number (for corporate customers)")
+ }

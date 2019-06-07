@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product" type="Tigren\CatalogGraphQl\Override\CatalogGraphQl\Product" />
+    <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\Query\Filter" type="Tigren\CatalogGraphQl\Override\CatalogGraphQl\Filter" />
+
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Category\Products">
+        <plugin name="pwa_category_products" type="Tigren\CatalogGraphQl\Plugin\GraphQL\Category\Products" />
+    </type>
+    <type name="Magento\CatalogGraphQl\Model\Resolver\CategoryTree">
+        <plugin name="pwa_category_tree" type="Tigren\CatalogGraphQl\Plugin\GraphQL\CategoryTree" />
+    </type>
+
+</config>

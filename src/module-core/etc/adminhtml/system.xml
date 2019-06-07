@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+  ~ @author Tigren Solutions <info@tigren.com>
+  ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+  ~ @license Open Software License ("OSL") v. 3.0
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="tigren" class="tigren-config-tab" translate="label" sortOrder="9000">
+            <label>Tigren</label>
+        </tab>
+        <section id="tigren_info" translate="label" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Tigren Store</label>
+            <tab>tigren</tab>
+            <resource>Magento_Core::config_tigren_core</resource>
+            <group id="information" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Information</label>
+                <frontend_model>Tigren\Core\Block\System\Config\Information</frontend_model>
+            </group>
+            <group id="installed_extensions" translate="label" type="text" sortOrder="10" showInDefault="1"
+                   showInWebsite="1" showInStore="1">
+                <label>Installed Tigren Extensions</label>
+                <frontend_model>Tigren\Core\Block\System\Config\Extensions</frontend_model>
+            </group>
+        </section>
+    </system>
+</config>

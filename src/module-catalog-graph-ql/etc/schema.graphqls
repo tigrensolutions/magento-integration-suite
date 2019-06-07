@@ -1,0 +1,67 @@
+type Query {
+    products_list : ProductList @doc(description: "List new and feature product on homepage")
+    @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\ProductList")
+}
+
+type ProductList {
+    new_items: [ProductInterface] @doc(description: "An array of products set as new")
+    featured_items: [ProductInterface] @doc(description: "An array of products set as featured")
+}
+
+type Mutation {
+    contactUs(
+        name: String!
+        email: String!
+        telephone: String
+        comment: String!
+    ): Boolean @resolver(class: "\\Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\SubmitContactUs") @doc(description:"submit to contact website")
+}
+
+type Attribute @doc(description: "define data of an attribute") {
+    label : String
+    code : String
+    value : String
+}
+
+interface ProductInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\\ProductInterfaceTypeResolverComposite") @doc(description: "The ProductInterface contains attributes that are common to all types of products. Note that descriptions may not be available for custom and EAV attributes.") {
+    is_available: Boolean @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\IsAvailable")
+    final_price: Float @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\FinalPrice")
+    attributes: [Attribute] @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\Attributes")
+    related: [ProductInterface] @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\Related")
+}
+
+interface CategoryInterface {
+    filters(
+        filter: [LayerFilterInput]
+    ): CategoryFilters @doc(description: "The list of filters of the category") @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Category\\Filters")
+    include_in_menu: Boolean
+    image: String @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Category\\Image")
+    display_mode: String @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Category\\DisplayMode")
+}
+
+input LayerFilterInput {
+    code : String! @doc(description: "code of attribute filter")
+    value : String! @doc(description: "value of attribute filter")
+}
+
+type CategoryFilters @doc(description: "The category filters") {
+    items: [CategoryFilter] @doc(description: "An array of filters available for the category")
+}
+
+type CategoryFilter @doc(description: "The category filters") {
+    name : String! @doc(description: "Name of the filter")
+    code : String! @doc(description: "The code of the filter")
+    items: [FilterOption] @doc(description: "The list options of the filter")
+}
+
+type FilterOption @doc(description: "An option of the filter") {
+    value : String! @doc(description: "the value of option")
+    name : String! @doc(description: "The label of option")
+    count : Int! @doc(description: "count of option")
+    text : String @doc(description: "Text label of swatch option")
+}
+
+input ProductSortInput {
+    position: SortEnum
+}
+
