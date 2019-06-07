@@ -7,9 +7,21 @@
 
 namespace Tigren\Core\Block\System\Config;
 
+use Magento\Backend\Block\Context;
+use Magento\Backend\Model\Auth\Session;
 use Magento\Config\Block\System\Config\Form\Field;
+use Magento\Config\Block\System\Config\Form\Fieldset;
+use Magento\Framework\Data\Form\Element\AbstractElement;
+use Magento\Framework\DataObject;
+use Magento\Framework\Module\ModuleListInterface;
+use Magento\Framework\Module\ModuleResource;
+use Magento\Framework\View\Helper\Js;
 
-class Extensions extends \Magento\Config\Block\System\Config\Form\Fieldset
+/**
+ * Class Extensions
+ * @package Tigren\Core\Block\System\Config
+ */
+class Extensions extends Fieldset
 {
     /**
      * @var Field
@@ -17,28 +29,28 @@ class Extensions extends \Magento\Config\Block\System\Config\Form\Fieldset
     protected $_fieldRenderer;
 
     /**
-     * @var \Magento\Framework\Module\ModuleListInterface
+     * @var ModuleListInterface
      */
     protected $_moduleList;
 
     /**
-     * @var \Magento\Framework\Module\ModuleResource
+     * @var ModuleResource
      */
     private $moduleResource;
 
     /**
-     * @param \Magento\Backend\Block\Context $context
-     * @param \Magento\Backend\Model\Auth\Session $authSession
-     * @param \Magento\Framework\View\Helper\Js $jsHelper
-     * @param \Magento\Framework\Module\ModuleListInterface $moduleList
+     * @param Context $context
+     * @param Session $authSession
+     * @param Js $jsHelper
+     * @param ModuleListInterface $moduleList
      * @param array $data
      */
     public function __construct(
-        \Magento\Backend\Block\Context $context,
-        \Magento\Backend\Model\Auth\Session $authSession,
-        \Magento\Framework\View\Helper\Js $jsHelper,
-        \Magento\Framework\Module\ModuleListInterface $moduleList,
-        \Magento\Framework\Module\ModuleResource $moduleResource,
+        Context $context,
+        Session $authSession,
+        Js $jsHelper,
+        ModuleListInterface $moduleList,
+        ModuleResource $moduleResource,
         array $data = []
     ) {
         parent::__construct($context, $authSession, $jsHelper, $data);
@@ -47,16 +59,16 @@ class Extensions extends \Magento\Config\Block\System\Config\Form\Fieldset
     }
 
     /**
-     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     * @param AbstractElement $element
      * @return string
      */
-    public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
+    public function render(AbstractElement $element)
     {
         $html = $this->_getHeaderHtml($element);
 
         $modules = $this->_moduleList->getNames();
 
-        $dispatchResult = new \Magento\Framework\DataObject($modules);
+        $dispatchResult = new DataObject($modules);
 
         $modules = $dispatchResult->toArray();
 
@@ -76,6 +88,11 @@ class Extensions extends \Magento\Config\Block\System\Config\Form\Fieldset
         return $html;
     }
 
+    /**
+     * @param $fieldset
+     * @param $moduleCode
+     * @return string
+     */
     protected function _getFieldHtml($fieldset, $moduleCode)
     {
         $currentVer = $this->moduleResource->getDataVersion($moduleCode);
