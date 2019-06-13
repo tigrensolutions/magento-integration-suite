@@ -27,7 +27,8 @@
         "tigren/module-quote-graph-ql": "self.version",
         "tigren/module-review-graph-ql": "self.version",
         "tigren/module-store-graph-ql": "self.version",
-        "tigren/module-wishlist-graph-ql": "self.version"
+        "tigren/module-wishlist-graph-ql": "self.version",
+        "tigren/module-review": "self.version"
     },
     "autoload": {
         "files": [
@@ -38,7 +39,8 @@
             "src/module-quote-graph-ql/registration.php",
             "src/module-review-graph-ql/registration.php",
             "src/module-store-graph-ql/registration.php",
-            "src/module-wishlist-graph-ql/registration.php"
+            "src/module-wishlist-graph-ql/registration.php",
+            "src/module-review/registration.php"
         ],
         "psr-4": {
             "Tigren\\CatalogGraphQl\\": "src/module-catalog-graph-ql",
@@ -48,7 +50,8 @@
             "Tigren\\QuoteGraphQl\\": "src/module-quote-graph-ql",
             "Tigren\\ReviewGraphQl\\": "src/module-review-graph-ql",
             "Tigren\\StoreGraphQl\\": "src/module-store-graph-ql",
-            "Tigren\\WishlistGraphQl\\": "src/module-wishlist-graph-ql"
+            "Tigren\\WishlistGraphQl\\": "src/module-wishlist-graph-ql",
+            "Tigren\\Review\\": "src/module-review"
         }
     },
    "minimum-stability": "dev",
