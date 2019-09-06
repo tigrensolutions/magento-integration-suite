@@ -30,7 +30,7 @@
         "tigren/module-wishlist-graph-ql": "self.version",
         "tigren/module-review": "self.version",
         "tigren/module-pwa-firebase": "self.version",
-        "tigren/module-cms-graph-ql": "self.version",
+        "tigren/module-cms-graph-ql": "self.version"
     },
     "autoload": {
         "files": [
