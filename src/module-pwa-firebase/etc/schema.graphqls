@@ -1,0 +1,5 @@
+type Mutation {
+    subscribeFirebase(
+        token: String
+    ): Boolean @resolver(class: "\\Tigren\\ProgressiveWebApp\\Model\\Graphql\\Resolver\\Firebase\\Subscribe") @doc(description:"Subscribe device token to send notification")
+}

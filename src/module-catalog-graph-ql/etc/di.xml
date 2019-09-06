@@ -4,10 +4,12 @@
     <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\Query\Filter" type="Tigren\CatalogGraphQl\Override\CatalogGraphQl\Filter" />
 
     <type name="Magento\CatalogGraphQl\Model\Resolver\Category\Products">
-        <plugin name="pwa_category_products" type="Tigren\CatalogGraphQl\Plugin\GraphQL\Category\Products" />
+        <plugin name="pwa_category_products" type="Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver\Category\Products" />
     </type>
     <type name="Magento\CatalogGraphQl\Model\Resolver\CategoryTree">
-        <plugin name="pwa_category_tree" type="Tigren\CatalogGraphQl\Plugin\GraphQL\CategoryTree" />
+        <plugin name="pwa_category_tree" type="Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver\CategoryTree" />
     </type>
-
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Products">
+        <plugin name="pwa_products" type="Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver\Products" />
+    </type>
 </config>

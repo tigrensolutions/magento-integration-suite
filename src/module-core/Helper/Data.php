@@ -9,6 +9,7 @@ use IntlDateFormatter;
 use Magento\Catalog\Helper\ImageFactory;
 use Magento\Catalog\Model\Config;
 use Magento\Checkout\Model\Session;
+use Magento\Cms\Api\Data\PageInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\CustomerFactory;
@@ -43,6 +44,8 @@ class Data extends AbstractHelper
      *
      */
     const XML_PATH_PWA_FEATUERE_PRODUCT_CONDITION = 'pwa_connector/general/feature_product';
+    const DEFAULT_GROUP = 'design/head/';
+
     /**
      *
      * /**
@@ -343,6 +346,80 @@ class Data extends AbstractHelper
             $scope = ScopeInterface::SCOPE_STORE;
         }
         return $this->scopeConfig->getValue($path, $scope, $store);
+    }
+
+    public function getMetaConfig()
+    {
+        return [
+            'description' => $this->getConfig(self::DEFAULT_GROUP.'default_description'),
+            'keywords' => $this->getConfig(self::DEFAULT_GROUP.'default_keywords'),
+            'title' => $this->getConfig(self::DEFAULT_GROUP.'default_title'),
+            'prefix' => $this->getConfig(self::DEFAULT_GROUP.'title_prefix'),
+            'suffix' => $this->getConfig(self::DEFAULT_GROUP.'title_suffix'),
+        ];
+    }
+
+    public function applyMetaConfig(array $result, $type = null)
+    {
+        $metaConfig = $this->getMetaConfig();
+
+        if ($type == 'cms') {
+            if (empty($result[PageInterface::META_DESCRIPTION]) && !empty($metaConfig['description'])) {
+                $result[PageInterface::META_DESCRIPTION] = $metaConfig['description'];
+            }
+            if (empty($result[PageInterface::META_KEYWORDS]) && !empty($metaConfig['keywords'])) {
+                $result[PageInterface::META_KEYWORDS] = $metaConfig['keywords'];
+            }
+            if (empty($result[PageInterface::META_TITLE]) && !empty($metaConfig['title'])) {
+                $result[PageInterface::META_TITLE] = $metaConfig['title'];
+            }
+            if (!empty($result[PageInterface::META_TITLE])) {
+                if (trim($metaConfig['prefix'])) {
+                    $result[PageInterface::META_TITLE] = trim($metaConfig['prefix']). ' ' . $result[PageInterface::META_TITLE];
+                }
+                if (trim($metaConfig['suffix'])) {
+                    $result[PageInterface::META_TITLE] = $result[PageInterface::META_TITLE]. ' ' .trim($metaConfig['suffix']) ;
+                }
+            }
+        }
+        if ($type == 'cat') {
+            if (empty($result[PageInterface::META_DESCRIPTION]) && !empty($metaConfig['description'])) {
+                $result[PageInterface::META_DESCRIPTION] = $metaConfig['description'];
+            }
+            if (empty($result[PageInterface::META_KEYWORDS]) && !empty($metaConfig['keywords'])) {
+                $result[PageInterface::META_KEYWORDS] = $metaConfig['keywords'];
+            }
+            if (!empty($result['name'])) {
+                if (trim($metaConfig['prefix'])) {
+                    $result[PageInterface::META_TITLE] = trim($metaConfig['prefix']). ' ' . $result['name'];
+                }
+                if (trim($metaConfig['suffix'])) {
+                    $result[PageInterface::META_TITLE].= ' ' .trim($metaConfig['suffix']) ;
+                }
+            }
+        }
+        if ($type == 'prod') {
+            if (empty($result[PageInterface::META_DESCRIPTION])) {
+                if (!empty($result['description'])) {
+                    $result[PageInterface::META_DESCRIPTION] = $result['description'];
+                } else if (!empty($metaConfig['description'])) {
+                    $result[PageInterface::META_DESCRIPTION] = $metaConfig['description'];
+                }
+            }
+            if (empty($result['meta_keyword']) && !empty($metaConfig['keywords'])) {
+                $result['meta_keyword'] = $metaConfig['keywords'];
+            }
+            if (!empty($result['name'])) {
+                if (trim($metaConfig['prefix'])) {
+                    $result[PageInterface::META_TITLE] = trim($metaConfig['prefix']). ' ' . $result['name'];
+                }
+                if (trim($metaConfig['suffix'])) {
+                    $result[PageInterface::META_TITLE].= ' ' .trim($metaConfig['suffix']) ;
+                }
+            }
+        }
+
+        return $result;
     }
 
 }

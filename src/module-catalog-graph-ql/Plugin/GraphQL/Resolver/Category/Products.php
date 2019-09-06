@@ -4,7 +4,7 @@
  * See COPYING.txt for license details.
  */
 
-namespace Tigren\CatalogGraphQl\Plugin\GraphQL\Category;
+namespace Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver\Category;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;

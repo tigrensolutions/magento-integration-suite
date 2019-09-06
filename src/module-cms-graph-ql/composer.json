@@ -1,0 +1,22 @@
+{
+  "name": "tigren/module-cmsgraphql",
+  "description": "",
+  "type": "magento2-module",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Loky",
+      "email": "loky.doan@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Tigren\\CmsGraphQl\\": ""
+    },
+    "files": [
+      "registration.php"
+    ]
+  }
+}

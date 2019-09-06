@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!--
+  ~ @author Tigren Solutions <info@tigren.com>
+  ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+  ~ @license Open Software License ("OSL") v. 3.0
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="tigren" translate="label" sortOrder="900">
+            <label>Tigren</label>
+        </tab>
+        <section id="progressivewebapp" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Progressive Web App</label>
+            <tab>tigren</tab>
+            <resource>Tigren_ProgressiveWebApp::config_progressivewebapp</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Settings</label>
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+            <group id="manifest" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Manifest Settings</label>
+                <field id="short_name" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Short Name</label>
+                    <comment>A short name for use as the text on the users home screen.</comment>
+                </field>
+                <field id="name" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Name</label>
+                    <comment>A name for use in the Web App Install banner.</comment>
+                </field>
+                <field id="description" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Description</label>
+                </field>
+                <field id="start_url" translate="label comment" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Start URL</label>
+                    <comment><![CDATA[The URL to start at when launching from the home screen shortcut. Relative to the Magento base URL. If you don't provide a start url, the current page is used.]]></comment>
+                </field>
+                <field id="theme_color" translate="label comment" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Theme Color</label>
+                    <frontend_model>Tigren\ProgressiveWebApp\Block\Adminhtml\Color</frontend_model>
+                    <comment><![CDATA[The color used to customise the look of the browser. In hex format, e.g. #112233.]]></comment>
+                </field>
+                <field id="background_color" translate="label comment" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Background Color</label>
+                    <frontend_model>Tigren\ProgressiveWebApp\Block\Adminhtml\Color</frontend_model>
+                    <comment><![CDATA[The color used to customise the splash screen when launching from the home screen shortcut. In hex format, e.g. #AABBCC.]]></comment>
+                </field>
+                <field id="display_type" translate="label comment" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Type</label>
+                    <comment><![CDATA[Choose whether the site is launched as a web page or a standalone app when launched from the home screen shortcut.]]></comment>
+                    <source_model>Tigren\ProgressiveWebApp\Model\System\Config\Source\DisplayType</source_model>
+                </field>
+                <field id="orientation" translate="label comment" type="select" sortOrder="304" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Screen Orientation</label>
+                    <comment><![CDATA[Choose whether the site launches in portrait or landscape mode when launced from the home screen shortcut.]]></comment>
+                    <source_model>Tigren\ProgressiveWebApp\Model\System\Config\Source\Orientation</source_model>
+                </field>
+                <field id="icon" translate="label comment" type="image" sortOrder="501" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>App Icon</label>
+                    <comment><![CDATA[An icon to use for splash screen and home screen shortcut. Allowed file types: jpg, jpeg, png, gif.]]></comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
+                    <upload_dir config="system/filesystem/media" scope_info="1">tigren/manifest/icons</upload_dir>
+                    <base_url type="media" scope_info="1">tigren/manifest/icons</base_url>
+                </field>
+                <field id="icon_sizes" translate="label comment" type="text" sortOrder="502" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>App Icon Sizes</label>
+                    <comment><![CDATA[A space separated list of sizes to allow showing the icon at.]]></comment>
+                </field>
+            </group>
+            <group id="notification" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Push Notification Settings</label>
+                <field id="fcm_version" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Firebase Cloud Message Version</label>
+                    <comment><![CDATA[Example: https://www.gstatic.com/firebasejs/4.5.0/firebase.js. The FCM version is 4.5.0]]></comment>
+                </field>
+                <field id="fcm_server_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Firebase Cloud Message Server Key</label>
+                    <comment><![CDATA[Get more information at <a href="https://console.firebase.google.com" target="_blank">https://console.firebase.google.com</a>.]]></comment>
+                </field>
+                <field id="fcm_messaging_sender_id" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your Messaging Sender Id</label>
+                </field>
+                <field id="fcm_topic_name" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Topic Name</label>
+                    <comment><![CDATA[All clients will be added to this topic name. It should lowercase and no space. Example: tigren]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

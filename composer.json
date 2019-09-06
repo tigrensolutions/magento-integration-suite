@@ -28,7 +28,9 @@
         "tigren/module-review-graph-ql": "self.version",
         "tigren/module-store-graph-ql": "self.version",
         "tigren/module-wishlist-graph-ql": "self.version",
-        "tigren/module-review": "self.version"
+        "tigren/module-review": "self.version",
+        "tigren/module-pwa-firebase": "self.version",
+        "tigren/module-cms-graph-ql": "self.version",
     },
     "autoload": {
         "files": [
@@ -40,7 +42,9 @@
             "src/module-review-graph-ql/registration.php",
             "src/module-store-graph-ql/registration.php",
             "src/module-wishlist-graph-ql/registration.php",
-            "src/module-review/registration.php"
+            "src/module-review/registration.php",
+            "src/module-pwa-firebase/registration.php",
+            "src/module-cms-graph-ql/registration.php"
         ],
         "psr-4": {
             "Tigren\\CatalogGraphQl\\": "src/module-catalog-graph-ql",
@@ -51,7 +55,9 @@
             "Tigren\\ReviewGraphQl\\": "src/module-review-graph-ql",
             "Tigren\\StoreGraphQl\\": "src/module-store-graph-ql",
             "Tigren\\WishlistGraphQl\\": "src/module-wishlist-graph-ql",
-            "Tigren\\Review\\": "src/module-review"
+            "Tigren\\Review\\": "src/module-review",
+            "Tigren\\ProgressiveWebApp\\": "src/module-pwa-firebase",
+            "Tigren\\CmsGraphQl\\": "src/module-cms-graph-ql"
         }
     },
    "minimum-stability": "dev",

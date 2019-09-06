@@ -31,6 +31,9 @@ interface ProductInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\
 }
 
 interface CategoryInterface {
+    products(
+        filterList: [LayerFilterInput]
+    ): CategoryProducts
     filters(
         filter: [LayerFilterInput]
     ): CategoryFilters @doc(description: "The list of filters of the category") @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Category\\Filters")
