@@ -1,14 +1,14 @@
 {
-  "name": "tigren/module-cmsgraphql",
+  "name": "tigrensolutions/module-cms-graph-ql",
   "description": "",
   "type": "magento2-module",
   "license": "proprietary",
-  "authors": [
-    {
-      "name": "Loky",
-      "email": "loky.doan@gmail.com"
-    }
-  ],
+    "authors": [
+        {
+            "name": "Tigren Solutions",
+            "email": "info@tigren.com"
+        }
+    ],
   "minimum-stability": "dev",
   "require": {},
   "autoload": {
