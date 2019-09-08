@@ -99,7 +99,7 @@ class ProductList implements ResolverInterface
         $this->rule = $rule;
         $this->sqlBuilder = $sqlBuilder;
         $this->conditionsHelper = $conditionsHelper;
-        $this->_bestsellerCollection = $bestsellerCollection;
+        $this->bestsellerCollection = $bestsellerCollection;
         $this->config = $config;
     }
 
