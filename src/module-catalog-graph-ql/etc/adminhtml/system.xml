@@ -18,7 +18,22 @@
                 <label>General</label>
                 <field id="feature_product" type="textarea" translate="label" sortOrder="0" showInDefault="1" showInWebsite="1"
                        showInStore="1">
-                    <label>Condition</label>
+                    <label>Feature Products Condition</label>
+                </field>
+                <field id="show_new" type="select" translate="label" sortOrder="5" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Show New Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="show_feature" type="select" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Show Feature Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="show_bestseller" type="select" translate="label" sortOrder="15" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Show Best Seller Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
         </section>

@@ -6,6 +6,7 @@ type Query {
 type ProductList {
     new_items: [ProductInterface] @doc(description: "An array of products set as new")
     featured_items: [ProductInterface] @doc(description: "An array of products set as featured")
+    bestseller_items: [ProductInterface] @doc(description: "An array of products set as bestseller")
 }
 
 type Mutation {

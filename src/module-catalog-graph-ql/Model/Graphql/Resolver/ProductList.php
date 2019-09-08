@@ -7,20 +7,21 @@ declare(strict_types=1);
 
 namespace Tigren\CatalogGraphQl\Model\Graphql\Resolver;
 
+use Magento\Catalog\Model\Config as CatalogConfig;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogWidget\Model\Rule;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
-use Magento\Catalog\Model\Product\Visibility;
-use Magento\Catalog\Model\Config as CatalogConfig;
 use Magento\Rule\Model\Condition\Sql\Builder;
 use Magento\Widget\Helper\Conditions;
+use Tigren\CatalogGraphQl\Model\ResourceModel\Product\Bestsellers\Collection as BestsellerCollection;
 use Tigren\Core\Helper\Data;
+use Tigren\Core\Model\Config;
 use Zend_Db_Expr;
 
 /**
@@ -29,10 +30,23 @@ use Zend_Db_Expr;
 class ProductList implements ResolverInterface
 {
 
+    /**
+     * @var Data
+     */
     protected $_helper;
+    /**
+     * @var TimezoneInterface
+     */
     protected $_localeDate;
+    /**
+     * @var Visibility
+     */
     protected $_visibility;
+    /**
+     * @var CatalogConfig
+     */
     protected $_catalogConfig;
+    protected $_config;
     /**
      * @var Rule
      */
@@ -45,8 +59,26 @@ class ProductList implements ResolverInterface
      * @var Conditions
      */
     protected $conditionsHelper;
+
     private $_collectionFactory;
 
+    private $bestsellerCollection;
+
+    private $config;
+
+    /**
+     * ProductList constructor.
+     * @param Data $helper
+     * @param CollectionFactory $collectionFactory
+     * @param TimezoneInterface $localeDate
+     * @param Visibility $visibility
+     * @param CatalogConfig $catalogConfig
+     * @param Rule $rule
+     * @param Builder $sqlBuilder
+     * @param Conditions $conditionsHelper
+     * @param BestsellerCollection $bestsellerCollection
+     * @param Config $config
+     */
     public function __construct(
         Data $helper,
         CollectionFactory $collectionFactory,
@@ -55,7 +87,9 @@ class ProductList implements ResolverInterface
         CatalogConfig $catalogConfig,
         Rule $rule,
         Builder $sqlBuilder,
-        Conditions $conditionsHelper
+        Conditions $conditionsHelper,
+        BestsellerCollection $bestsellerCollection,
+        Config $config
     ) {
         $this->_helper = $helper;
         $this->_collectionFactory = $collectionFactory;
@@ -65,6 +99,8 @@ class ProductList implements ResolverInterface
         $this->rule = $rule;
         $this->sqlBuilder = $sqlBuilder;
         $this->conditionsHelper = $conditionsHelper;
+        $this->_bestsellerCollection = $bestsellerCollection;
+        $this->config = $config;
     }
 
     /**
@@ -72,12 +108,17 @@ class ProductList implements ResolverInterface
      */
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
+        $showOnHomePage = $this->config->showOnHomePage();
         $data = [];
-        $data['new_items'] = $this->getNewProducts();
-        $data['featured_items'] = $this->getFeatureProducts();
+        $data['new_items'] = !empty($showOnHomePage['new']) ? $this->getNewProducts() : [];
+        $data['featured_items'] = !empty($showOnHomePage['feature']) ? $this->getFeatureProducts() : [];
+        $data['bestseller_items'] = !empty($showOnHomePage['bestseller']) ? $this->getBestsellerProducts() : [];
         return $data;
     }
 
+    /**
+     * @return array
+     */
     private function getNewProducts()
     {
         /** @var Collection $collection */
@@ -202,6 +243,33 @@ class ProductList implements ResolverInterface
         }
         $this->rule->loadPost(['conditions' => $conditions]);
         return $this->rule->getConditions();
+    }
+
+    /**
+     * @return array
+     */
+    public function getBestsellerProducts()
+    {
+        /** @var $collection Collection */
+        $collection = $this->bestsellerCollection->setVisibility($this->_visibility->getVisibleInCatalogIds());
+        $productArray = [];
+        $collection = $this->_addProductAttributesAndPrices($collection)
+            ->addStoreFilter()
+            ->setPageSize(5)
+            ->setCurPage(1);
+        /**
+         * Prevent retrieval of duplicate records. This may occur when multiselect product attribute matches
+         * several allowed values from condition simultaneously
+         */
+        $collection->distinct(true);
+
+        $productArray = [];
+        /** @var Product $product */
+        foreach ($collection->getItems() as $product) {
+            $productArray[$product->getId()] = $product->getData();
+            $productArray[$product->getId()]['model'] = $product;
+        }
+        return $productArray;
     }
 
 }
