@@ -1,6 +1,14 @@
 type Query {
     products_list : ProductList @doc(description: "List new and feature product on homepage")
     @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\ProductList")
+    product (
+    id: Int! @doc(description: "The ID of product"),
+): Product @doc(description: "The Product object")
+    @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product")
+}
+
+type Product {
+    item : ProductInterface
 }
 
 type ProductList {
