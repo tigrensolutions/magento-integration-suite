@@ -10,7 +10,7 @@ namespace Tigren\WishlistGraphQl\Model\Resolver\Mutation;
 
 use Exception;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\CustomerGraphQl\Model\Customer\CheckCustomerAccount;
+use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Exception\LocalizedException;
@@ -41,24 +41,24 @@ class AddToWishlist implements ResolverInterface
      */
     protected $_eventManager;
     /**
-     * @var CheckCustomerAccount
+     * @var GetCustomer
      */
-    private $checkCustomerAccount;
+    private $getCustomer;
 
     /**
      * AddToWishlist constructor.
-     * @param CheckCustomerAccount $checkCustomerAccount
+     * @param GetCustomer $getCustomer
      * @param ProductRepositoryInterface $productRepository
      * @param WishlistFactory $wishlistFactory
      * @param EventManager $eventManager
      */
     public function __construct(
-        CheckCustomerAccount $checkCustomerAccount,
+        GetCustomer $getCustomer,
         ProductRepositoryInterface $productRepository,
         WishlistFactory $wishlistFactory,
         EventManager $eventManager
     ) {
-        $this->checkCustomerAccount = $checkCustomerAccount;
+        $this->getCustomer = $getCustomer;
         $this->productRepository = $productRepository;
         $this->wishlistFactory = $wishlistFactory;
         $this->eventManager = $eventManager;
@@ -80,10 +80,10 @@ class AddToWishlist implements ResolverInterface
 
         $currentUserId = $context->getUserId();
         $currentUserType = $context->getUserType();
-        $this->checkCustomerAccount->execute($currentUserId, $currentUserType);
+        $customer = $this->getCustomer->execute($currentUserId, $currentUserType);
         $currentUserId = (int)$currentUserId;
 
-        $wishlist = $this->wishlistFactory->create()->loadByCustomerId($currentUserId, true);
+        $wishlist = $this->wishlistFactory->create()->loadByCustomerId($customer->getId(), true);
 
         if (!$wishlist->getId()) {
             throw new NotFoundException(__('Page not found.'));

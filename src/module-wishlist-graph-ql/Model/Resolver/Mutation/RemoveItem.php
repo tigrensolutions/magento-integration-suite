@@ -13,7 +13,7 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Helper\Product;
 use Magento\Catalog\Helper\Product\Configuration;
 use Magento\Checkout\Model\Cart;
-use Magento\CustomerGraphQl\Model\Customer\CheckCustomerAccount;
+use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -62,9 +62,9 @@ class RemoveItem implements ResolverInterface
      */
     protected $productConfig;
     /**
-     * @var CheckCustomerAccount
+     * @var GetCustomer
      */
-    protected $checkCustomerAccount;
+    protected $getCustomer;
     /**
      * @var OptionFactory
      */
@@ -79,7 +79,7 @@ class RemoveItem implements ResolverInterface
         OptionFactory $optionFactory,
         Product $productHelper,
         Configuration $productConfig,
-        CheckCustomerAccount $checkCustomerAccount
+        GetCustomer $getCustomer
     ) {
         $this->productRepository = $productRepository;
         $this->wishlistFactory = $wishlistFactory;
@@ -89,7 +89,7 @@ class RemoveItem implements ResolverInterface
         $this->optionFactory = $optionFactory;
         $this->productHelper = $productHelper;
         $this->productConfig = $productConfig;
-        $this->checkCustomerAccount = $checkCustomerAccount;
+        $this->getCustomer = $getCustomer;
     }
 
     /**
@@ -108,7 +108,7 @@ class RemoveItem implements ResolverInterface
 
         $currentUserId = $context->getUserId();
         $currentUserType = $context->getUserType();
-        $this->checkCustomerAccount->execute($currentUserId, $currentUserType);
+        $customer = $this->getCustomer->execute($currentUserId, $currentUserType);
         $currentUserId = (int)$currentUserId;
 
         $itemId = $args['item'];
@@ -119,7 +119,7 @@ class RemoveItem implements ResolverInterface
             throw new GraphQlInputException(__('This item id is not exist.'));
         }
 
-        $wishlist = $this->wishlistFactory->create()->loadByCustomerId($currentUserId);
+        $wishlist = $this->wishlistFactory->create()->loadByCustomerId($customer->getId());
         if (!$wishlist) {
             throw new NotFoundException(__('Page not found.'));
         }

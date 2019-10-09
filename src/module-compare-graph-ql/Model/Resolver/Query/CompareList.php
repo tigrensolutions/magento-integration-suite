@@ -10,7 +10,6 @@ namespace Tigren\CompareGraphQl\Model\Resolver\Query;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
-use Magento\CatalogInventory\Model\Stock\StockItemRepository;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -30,19 +29,19 @@ class CompareList implements ResolverInterface
 
     protected $productRepository;
 
-    protected $_stockItemRepository;
+    protected $_stockItem;
 
 
     public function __construct(
         ProductRepositoryInterface $productRepository,
         Data $helper,
-        StockItemRepository $stockItemRepository,
+        \Magento\CatalogInventory\Api\StockStateInterface $stockItem,
         Session $session
     ) {
         $this->productRepository = $productRepository;
         $this->_customerSession = $session;
         $this->_helper = $helper;
-        $this->_stockItemRepository = $stockItemRepository;
+        $this->_stockItem = $stockItem;
     }
 
     /**
@@ -78,8 +77,7 @@ class CompareList implements ResolverInterface
      */
     private function getItemData($product)
     {
-        $stockData = $this->_stockItemRepository->get($product->getId());
-
+        $stockStatus = $this->_stockItem->verifyStock($product->getId(), $product->getStore()->getWebsiteId());
         return [
             'id' => $product->getId(),
             'sku' => $product->getSku(),
@@ -91,7 +89,7 @@ class CompareList implements ResolverInterface
             'special_price' => $product->getSpecialPrice(),
             'final_price' => $product->getFinalPrice(),
             'type_id' => $product->getTypeId(),
-            'is_available' => $stockData->getIsInStock(),
+            'is_available' => $stockStatus,
             'description' => $product->getDescription() ?: '',
             'attributes' => $this->getAttributeData($product)
         ];

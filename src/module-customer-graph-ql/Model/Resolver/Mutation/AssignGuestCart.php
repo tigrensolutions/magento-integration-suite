@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Tigren\CustomerGraphQl\Model\Resolver\Mutation;
 
 use Exception;
-use Magento\CustomerGraphQl\Model\Customer\CheckCustomerAccount;
+use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
@@ -44,26 +44,26 @@ class AssignGuestCart implements ResolverInterface
      */
     protected $saveHandler;
     /**
-     * @var CheckCustomerAccount
+     * @var GetCustomer
      */
-    private $checkCustomerAccount;
+    private $getCustomer;
 
     /**
      * AssignGuestCart constructor.
-     * @param CheckCustomerAccount $checkCustomerAccount
+     * @param GetCustomer $getCustomer
      * @param CartRepositoryInterface $quoteRepository
      * @param QuoteIdMaskFactory $quoteIdMaskFactory
      * @param QuoteFactory $quoteFactory
      * @param SaveHandler $saveHandler
      */
     public function __construct(
-        CheckCustomerAccount $checkCustomerAccount,
+        GetCustomer $getCustomer,
         CartRepositoryInterface $quoteRepository,
         QuoteIdMaskFactory $quoteIdMaskFactory,
         QuoteFactory $quoteFactory,
         SaveHandler $saveHandler
     ) {
-        $this->checkCustomerAccount = $checkCustomerAccount;
+        $this->getCustomer = $getCustomer;
         $this->quoteRepository = $quoteRepository;
         $this->quoteIdMaskFactory = $quoteIdMaskFactory;
         $this->quoteFactory = $quoteFactory;
@@ -85,12 +85,12 @@ class AssignGuestCart implements ResolverInterface
         }
         $currentUserId = $context->getUserId();
         $currentUserType = $context->getUserType();
-        $this->checkCustomerAccount->execute($currentUserId, $currentUserType);
+        $customer = $this->getCustomer->execute($currentUserId, $currentUserType);
         $currentUserId = (int)$currentUserId;
 
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($args['cartId'], 'masked_id');
         $guestQuote = $this->quoteRepository->get($quoteIdMask->getQuoteId());
-        $quote = $this->quoteFactory->create()->loadByCustomer($currentUserId);
+        $quote = $this->quoteFactory->create()->loadByCustomer($customer->getId());
 
         if ($quote->merge($guestQuote)) {
             try {

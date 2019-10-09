@@ -100,7 +100,7 @@ class Product extends \Magento\CatalogGraphQl\Model\Resolver\Products\DataProvid
             $productIds = $this->_layerResolver->getProductCollection()->getAllIds();
             $collection->addFieldToFilter('entity_id',['in' => $productIds]);
         }
-
+        $collection->addAttributeToSelect('brand');
         $collection->load();
 
         // Methods that perform extra fetches post-load

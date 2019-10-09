@@ -13,7 +13,7 @@ use Magento\Catalog\Helper\Product;
 use Magento\Catalog\Helper\Product\Configuration;
 use Magento\Catalog\Model\Product\Exception as ProductException;
 use Magento\Checkout\Model\Cart;
-use Magento\CustomerGraphQl\Model\Customer\CheckCustomerAccount;
+use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -60,9 +60,9 @@ class AddToCart implements ResolverInterface
      */
     protected $productConfig;
     /**
-     * @var CheckCustomerAccount
+     * @var GetCustomer
      */
-    private $checkCustomerAccount;
+    private $getCustomer;
     /**
      * @var OptionFactory
      */
@@ -70,7 +70,7 @@ class AddToCart implements ResolverInterface
 
     /**
      * AddToCart constructor.
-     * @param CheckCustomerAccount $checkCustomerAccount
+     * @param GetCustomer $getCustomer
      * @param ProductRepositoryInterface $productRepository
      * @param WishlistFactory $wishlistFactory
      * @param EventManager $eventManager
@@ -81,7 +81,7 @@ class AddToCart implements ResolverInterface
      * @param Configuration $productConfig
      */
     public function __construct(
-        CheckCustomerAccount $checkCustomerAccount,
+        GetCustomer $getCustomer,
         ProductRepositoryInterface $productRepository,
         WishlistFactory $wishlistFactory,
         EventManager $eventManager,
@@ -91,7 +91,7 @@ class AddToCart implements ResolverInterface
         Product $productHelper,
         Configuration $productConfig
     ) {
-        $this->checkCustomerAccount = $checkCustomerAccount;
+        $this->getCustomer = $getCustomer;
         $this->productRepository = $productRepository;
         $this->wishlistFactory = $wishlistFactory;
         $this->eventManager = $eventManager;
@@ -122,7 +122,7 @@ class AddToCart implements ResolverInterface
 
         $currentUserId = $context->getUserId();
         $currentUserType = $context->getUserType();
-        $this->checkCustomerAccount->execute($currentUserId, $currentUserType);
+        $customer = $this->getCustomer->execute($currentUserId, $currentUserType);
         $currentUserId = (int)$currentUserId;
 
         $itemId = $args['item'];
@@ -133,7 +133,7 @@ class AddToCart implements ResolverInterface
             throw new GraphQlInputException(__('This item id is not exist.'));
         }
 
-        $wishlist = $this->wishlistFactory->create()->loadByCustomerId($currentUserId);
+        $wishlist = $this->wishlistFactory->create()->loadByCustomerId($customer->getId());
         if (!$wishlist) {
             throw new NotFoundException(__('Page not found.'));
         }

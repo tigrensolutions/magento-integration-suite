@@ -1,0 +1,4 @@
+type StoreConfig @doc(description: "The type contains information about a store config") {
+    paypal_merchant_id : String @doc(description: "Paypal Merchant Id")
+    paypal_sandbox : String @doc(description: "Paypal Sandbox")
+}

@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Tigren\CustomerGraphQl\Model\Resolver\Mutation;
 
-use Magento\CustomerGraphQl\Model\Customer\CheckCustomerAccount;
+use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
@@ -22,9 +22,9 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 class AssignOrder implements ResolverInterface
 {
     /**
-     * @var CheckCustomerAccount
+     * @var GetCustomer
      */
-    private $checkCustomerAccount;
+    private $getCustomer;
 
     /**
      * @var OrderRepositoryInterface
@@ -33,14 +33,14 @@ class AssignOrder implements ResolverInterface
 
     /**
      * AssignOrder constructor.
-     * @param CheckCustomerAccount $checkCustomerAccount
+     * @param GetCustomer $getCustomer
      * @param OrderRepositoryInterface $orderRepository
      */
     public function __construct(
-        CheckCustomerAccount $checkCustomerAccount,
+        GetCustomer $getCustomer,
         OrderRepositoryInterface $orderRepository
     ) {
-        $this->checkCustomerAccount = $checkCustomerAccount;
+        $this->getCustomer = $getCustomer;
         $this->orderRepository = $orderRepository;
     }
 
@@ -59,13 +59,13 @@ class AssignOrder implements ResolverInterface
         }
         $currentUserId = $context->getUserId();
         $currentUserType = $context->getUserType();
-        $this->checkCustomerAccount->execute($currentUserId, $currentUserType);
+        $customer = $this->getCustomer->execute($currentUserId, $currentUserType);
         $currentUserId = (int)$currentUserId;
 
         $order = $this->orderRepository->get($args['order']);
         if (!$order->getCustomerId()) {
             //if customer ID wasn't already assigned then assigning.
-            $order->setCustomerId($currentUserId);
+            $order->setCustomerId($customer->getId());
             $order->setCustomerIsGuest(0);
             $this->orderRepository->save($order);
         }
