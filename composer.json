@@ -31,7 +31,7 @@
         "tigren/module-review": "self.version",
         "tigren/module-pwa-firebase": "self.version",
         "tigren/module-cms-graph-ql": "self.version",
-        "tigren/module-papyal-express": "self.version",
+        "tigren/module-paypal-express": "self.version",
         "tigren/module-coupon-code": "self.version"
     },
     "autoload": {
@@ -47,7 +47,7 @@
             "src/module-review/registration.php",
             "src/module-pwa-firebase/registration.php",
             "src/module-cms-graph-ql/registration.php",
-            "src/module-papyal-express/registration.php",
+            "src/module-paypal-express/registration.php",
             "src/module-coupon-code/registration.php"
         ],
         "psr-4": {
@@ -62,8 +62,8 @@
             "Tigren\\Review\\": "src/module-review",
             "Tigren\\ProgressiveWebApp\\": "src/module-pwa-firebase",
             "Tigren\\CmsGraphQl\\": "src/module-cms-graph-ql",
-            "Tigren\\PaypalExpress\\": "src/module-cms-graph-ql",
-            "Tigren\\CouponCode\\": "src/module-cms-graph-ql"
+            "Tigren\\PaypalExpress\\": "src/module-paypal-express",
+            "Tigren\\CouponCode\\": "src/module-coupon-code"
         }
     },
    "minimum-stability": "dev",
