@@ -17,8 +17,10 @@ use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\Item\OptionFactory;
 use Magento\Wishlist\Model\ItemFactory;
@@ -112,6 +114,10 @@ class AddToCart implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        /** @var ContextInterface $context */
+        if (false === $context->getExtensionAttributes()->getIsCustomer()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
         if (!isset($args['item'])) {
             throw new GraphQlInputException(__('Specify the "item" value.'));
         }
@@ -120,11 +126,7 @@ class AddToCart implements ResolverInterface
             throw new GraphQlInputException(__('Specify the "qty" value.'));
         }
 
-        $currentUserId = $context->getUserId();
-        $currentUserType = $context->getUserType();
-        $customer = $this->getCustomer->execute($currentUserId, $currentUserType);
-        $currentUserId = (int)$currentUserId;
-
+        $customer = $this->getCustomer->execute($context);
         $itemId = $args['item'];
         /* @var $item Item */
         $item = $this->itemFactory->create()->load($itemId);

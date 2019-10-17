@@ -11,9 +11,11 @@ namespace Tigren\WishlistGraphQl\Model\Resolver\Mutation;
 use Exception;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Wishlist\Model\WishlistFactory;
 
 /**
@@ -68,6 +70,10 @@ class AllCart implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        /** @var ContextInterface $context */
+        if (false === $context->getExtensionAttributes()->getIsCustomer()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
         if (!isset($args['items'])) {
             throw new GraphQlInputException(__('Specify the "items" value.'));
         }

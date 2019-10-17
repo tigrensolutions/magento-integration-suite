@@ -2,7 +2,10 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product" type="Tigren\CatalogGraphQl\Override\CatalogGraphQl\Product" />
     <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\Query\Filter" type="Tigren\CatalogGraphQl\Override\CatalogGraphQl\Filter" />
-
+    <preference for="Tigren\CatalogGraphQl\Api\GuestCartRepositoryInterface"
+                type="Tigren\CatalogGraphQl\Model\GuestCartRepository" />
+    <preference for="Tigren\CatalogGraphQl\Api\CartRepositoryInterface"
+                type="Tigren\CatalogGraphQl\Model\CartRepository" />
     <type name="Magento\CatalogGraphQl\Model\Resolver\Category\Products">
         <plugin name="pwa_category_products" type="Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver\Category\Products" />
     </type>

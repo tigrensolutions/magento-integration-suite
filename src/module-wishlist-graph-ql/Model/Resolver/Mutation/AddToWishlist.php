@@ -17,9 +17,11 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Wishlist\Model\WishlistFactory;
 
 /**
@@ -74,15 +76,15 @@ class AddToWishlist implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        /** @var ContextInterface $context */
+        if (false === $context->getExtensionAttributes()->getIsCustomer()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
         if (!isset($args['product'])) {
             throw new GraphQlInputException(__('Specify the "product" value.'));
         }
 
-        $currentUserId = $context->getUserId();
-        $currentUserType = $context->getUserType();
-        $customer = $this->getCustomer->execute($currentUserId, $currentUserType);
-        $currentUserId = (int)$currentUserId;
-
+        $customer = $this->getCustomer->execute($context);
         $wishlist = $this->wishlistFactory->create()->loadByCustomerId($customer->getId(), true);
 
         if (!$wishlist->getId()) {
