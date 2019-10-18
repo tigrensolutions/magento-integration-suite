@@ -52,20 +52,30 @@ class Page
      * @param $pageId
      * @return array
      */
-    public function aroundGetData(
+    public function aroundGetDataByPageId(
         \Magento\CmsGraphQl\Model\Resolver\DataProvider\Page $subject,
         Closure $proceed,
         $pageId
     ) {
         $page = $this->pageRepository->getById($pageId);
 
+        return $this->convertPageData($page);
+    }
+
+    /**
+     * Convert page data
+     *
+     * @param PageInterface $page
+     * @return array
+     * @throws NoSuchEntityException
+     */
+    private function convertPageData(PageInterface $page)
+    {
         if (false === $page->isActive()) {
             throw new NoSuchEntityException();
         }
         $renderedContent = $page->getIdentifier() == 'home' ? '' : $this->widgetFilter->filter($page->getContent());
-
         $pageData = [
-            PageInterface::PAGE_ID => $page->getId(),
             'url_key' => $page->getIdentifier(),
             PageInterface::TITLE => $page->getTitle(),
             PageInterface::CONTENT => $renderedContent,
@@ -74,7 +84,9 @@ class Page
             PageInterface::META_TITLE => $page->getMetaTitle(),
             PageInterface::META_DESCRIPTION => $page->getMetaDescription(),
             PageInterface::META_KEYWORDS => $page->getMetaKeywords(),
+            PageInterface::PAGE_ID => $page->getId(),
+            PageInterface::IDENTIFIER => $page->getIdentifier(),
         ];
-        return $this->helper->applyMetaConfig($pageData, 'cms');
+        return $pageData;
     }
 }
