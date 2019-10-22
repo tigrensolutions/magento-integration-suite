@@ -87,6 +87,6 @@ class Page
             PageInterface::PAGE_ID => $page->getId(),
             PageInterface::IDENTIFIER => $page->getIdentifier(),
         ];
-        return $pageData;
+        return $this->helper->applyMetaConfig($pageData, 'cms');
     }
 }

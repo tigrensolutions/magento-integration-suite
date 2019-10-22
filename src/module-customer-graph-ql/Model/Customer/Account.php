@@ -342,17 +342,16 @@ class Account implements AccountInterface
                 return false;
             }
         }
-
         $websiteId = $this->storeManager->getStore()->getWebsiteId();
-
-        $customer = $this->customerRepository->get($email, $websiteId);
-
-        $newPasswordToken = $this->mathRandom->getUniqueHash();
-        $this->changeResetPasswordLinkToken($customer, $newPasswordToken);
-
         try {
+            $customer = $this->customerRepository->get($email, $websiteId);
+            $newPasswordToken = $this->mathRandom->getUniqueHash();
+            $this->changeResetPasswordLinkToken($customer, $newPasswordToken);
             $this->passwordResetConfirmation($customer, $baseUrl);
+        } catch (NoSuchEntityException $e) {
+
         } catch (MailException $e) {
+
         }
         return true;
     }

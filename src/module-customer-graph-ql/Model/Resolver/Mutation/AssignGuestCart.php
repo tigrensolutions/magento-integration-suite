@@ -12,9 +12,11 @@ use Exception;
 use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteIdMaskFactory;
@@ -80,14 +82,14 @@ class AssignGuestCart implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        /** @var ContextInterface $context */
+        if (false === $context->getExtensionAttributes()->getIsCustomer()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
         if (!isset($args['cartId'])) {
             throw new GraphQlInputException(__('Specify the "cartId" value.'));
         }
-        $currentUserId = $context->getUserId();
-        $currentUserType = $context->getUserType();
-        $customer = $this->getCustomer->execute($currentUserId, $currentUserType);
-        $currentUserId = (int)$currentUserId;
-
+        $customer = $this->getCustomer->execute($context);
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($args['cartId'], 'masked_id');
         $guestQuote = $this->quoteRepository->get($quoteIdMask->getQuoteId());
         $quote = $this->quoteFactory->create()->loadByCustomer($customer->getId());
