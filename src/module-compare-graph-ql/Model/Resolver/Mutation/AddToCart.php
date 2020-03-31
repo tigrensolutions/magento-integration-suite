@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 declare(strict_types=1);
@@ -33,14 +33,17 @@ class AddToCart implements ResolverInterface
      * @var ProductRepositoryInterface
      */
     protected $productRepository;
+
     /**
      * @var Cart
      */
     protected $cart;
+
     /**
      * @var StoreManagerInterface
      */
     protected $_storeManager;
+
     /**
      * @var
      */
@@ -105,5 +108,4 @@ class AddToCart implements ResolverInterface
 
         return true;
     }
-
 }

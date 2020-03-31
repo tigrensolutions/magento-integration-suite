@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\Review\Model;
@@ -55,6 +55,15 @@ class ReviewManagement implements ReviewManagementInterface
      */
     protected $userContext;
 
+    /**
+     * ReviewManagement constructor.
+     * @param ProductRepositoryInterface $productRepository
+     * @param ManagerInterface $eventManager
+     * @param ReviewFactory $reviewFactory
+     * @param RatingFactory $ratingFactory
+     * @param Data $helper
+     * @param UserContextInterface $userContext
+     */
     public function __construct(
         ProductRepositoryInterface $productRepository,
         ManagerInterface $eventManager,
@@ -108,5 +117,4 @@ class ReviewManagement implements ReviewManagementInterface
         }
         return $review->getId();
     }
-
 }

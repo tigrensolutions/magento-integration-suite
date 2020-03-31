@@ -1,25 +1,35 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
 namespace Tigren\CompareGraphQl\Helper;
 
+use Exception;
+use Magento\Catalog\Helper\Product\Compare;
+use Magento\Catalog\Model\Config;
+use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\Collection;
+use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory;
+use Magento\Catalog\Model\Session;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Phrase;
+use Magento\Framework\Stdlib\DateTime;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Class Data
  * @package Tigren\CompareGraphQl\helper
  */
-class Data extends \Magento\Framework\App\Helper\AbstractHelper
+class Data extends AbstractHelper
 {
     /**
      * Product Compare Items Collection
@@ -27,51 +37,65 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @var Collection
      */
     public $_itemCollection;
+
+    /**
+     * @var
+     */
     public $_attributes;
+
     /**
      * @var ResourceConnection
      */
     protected $_resource;
+
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory
+     * @var CollectionFactory
      */
     protected $_itemCollectionFactory;
+
     /**
-     * @var \Magento\Catalog\Model\Product\Visibility
+     * @var Visibility
      */
     protected $_catalogProductVisibility;
+
     /**
-     * @var \Magento\Catalog\Model\Session
+     * @var Session
      */
     protected $_catalogSession;
-    protected $_catalogConfig;
+
     /**
-     * @var \Magento\Catalog\Helper\Product\Compare
+     * @var Config
+     */
+    protected $_catalogConfig;
+
+    /**
+     * @var Compare
      */
     protected $_compareProduct;
+
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     private $_storeManager;
 
     /**
      * Data constructor.
      * @param ResourceConnection $resource
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory $itemCollectionFactory
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Catalog\Model\Product\Visibility $catalogProductVisibility
-     * @param \Magento\Catalog\Model\Session $catalogSession
-     * @param \Magento\Framework\App\Helper\Context $context
+     * @param CollectionFactory $itemCollectionFactory
+     * @param StoreManagerInterface $storeManager
+     * @param Visibility $catalogProductVisibility
+     * @param Session $catalogSession
+     * @param Context $context
      */
     public function __construct(
         ResourceConnection $resource,
-        \Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory $itemCollectionFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Catalog\Model\Product\Visibility $catalogProductVisibility,
-        \Magento\Catalog\Model\Session $catalogSession,
-        \Magento\Catalog\Model\Config $config,
-        \Magento\Catalog\Helper\Product\Compare $compare,
-        \Magento\Framework\App\Helper\Context $context
+        CollectionFactory $itemCollectionFactory,
+        StoreManagerInterface $storeManager,
+        Visibility $catalogProductVisibility,
+        Session $catalogSession,
+        Config $config,
+        Compare $compare,
+        Context $context
     ) {
         $this->_itemCollectionFactory = $itemCollectionFactory;
         $this->_resource = $resource;
@@ -87,13 +111,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param $sessionId
      * @param $customerId
      * @return string
+     * @throws Exception
      */
     public function createVisitor($sessionId, $customerId)
     {
         $visitorData = [
             'customer_id' => $customerId,
             'session_id' => $sessionId,
-            'last_visit_at' => (new \DateTime())->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT)
+            'last_visit_at' => (new \DateTime())->format(DateTime::DATETIME_PHP_FORMAT)
         ];
         $this->getConnection()->insert('customer_visitor', $visitorData);
         $visitorId = $this->getConnection()->fetchOne($this->getConnection()->select()->from(
@@ -132,7 +157,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getCompareCollection($customerId, $visitorId)
     {
-        //if (!$this->_itemCollection) {
         $this->_compareProduct->setAllowUsedFlat(false);
         $this->_itemCollection = $this->_itemCollectionFactory->create();
         $this->_itemCollection->useProductItem(true)->setStoreId($this->_storeManager->getStore()->getId());
@@ -148,7 +172,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         )->loadComparableAttributes()->addMinimalPrice()->addTaxPercents()->setVisibility(
             $this->_catalogProductVisibility->getVisibleInSiteIds()
         );
-        //}
 
         return $this->_itemCollection;
     }
@@ -181,6 +204,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
     }
 
+    /**
+     * @return array
+     */
     public function getAttributes()
     {
         if ($this->_attributes === null) {

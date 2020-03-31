@@ -1,14 +1,17 @@
 <?xml version="1.0"?>
 <!--
-  ~ @author Tigren Solutions <info@tigren.com>
+  ~ @author    Tigren Solutions <info@tigren.com>
   ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
-  ~ @license Open Software License ("OSL") v. 3.0
+  ~ @license   Open Software License ("OSL") v. 3.0
   -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider">
         <arguments>
             <argument name="extendedConfigData" xsi:type="array">
-                <item name="display_product_stock_status" xsi:type="string">cataloginventory/options/display_product_stock_status</item>
+                <item name="display_product_stock_status" xsi:type="string">
+                    cataloginventory/options/display_product_stock_status
+                </item>
                 <item name="default_country" xsi:type="string">general/country/default</item>
                 <item name="state_require_for" xsi:type="string">general/region/state_required</item>
                 <item name="allow_choose_state" xsi:type="string">general/region/display_all</item>
@@ -18,14 +21,16 @@
                 <item name="catalog_review_active" xsi:type="string">catalog/review/active</item>
                 <item name="catalog_review_allow_guest" xsi:type="string">catalog/review/allow_guest</item>
                 <item name="catalog_productalert_allow_stock" xsi:type="string">catalog/productalert/allow_stock</item>
-                <item name="layered_display_count" xsi:type="string">catalog/layered_navigation/display_product_count</item>
+                <item name="layered_display_count" xsi:type="string">catalog/layered_navigation/display_product_count
+                </item>
                 <item name="grid_per_page_values" xsi:type="string">catalog/frontend/grid_per_page_values</item>
                 <item name="grid_per_page" xsi:type="string">catalog/frontend/grid_per_page</item>
                 <item name="list_per_page_values" xsi:type="string">catalog/frontend/list_per_page_values</item>
                 <item name="list_per_page" xsi:type="string">catalog/frontend/list_per_page</item>
                 <item name="redirect_to_cart" xsi:type="string">checkout/cart/redirect_to_cart</item>
                 <item name="allow_guest_checkout" xsi:type="string">checkout/options/guest_checkout</item>
-                <item name="display_billing_address_on" xsi:type="string">checkout/options/display_billing_address_on</item>
+                <item name="display_billing_address_on" xsi:type="string">checkout/options/display_billing_address_on
+                </item>
                 <item name="enable_agreements" xsi:type="string">checkout/options/enable_agreements</item>
                 <item name="max_items_display_count" xsi:type="string">checkout/options/max_items_display_count</item>
                 <item name="productalert_allow_stock" xsi:type="string">catalog/productalert/allow_stock</item>
@@ -34,6 +39,20 @@
                 <item name="street_lines" xsi:type="string">customer/address/street_lines</item>
                 <item name="show_telephone" xsi:type="string">customer/address/telephone_show</item>
                 <item name="show_company" xsi:type="string">customer/address/company_show</item>
+                <item name="currency_allow" xsi:type="string">currency/options/allow</item>
+                <item name="welcome" xsi:type="string">design/header/welcome</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\GraphQl\Controller\GraphQl">
+        <plugin name="Magento\GraphQl\Controller\GraphQl"
+                type="Tigren\StoreGraphQl\Controller\Plugin\GraphQl"/>
+    </type>
+    <type name="Tigren\StoreGraphQl\Controller\HttpRequestProcessor">
+        <arguments>
+            <argument name="graphQlHeaders" xsi:type="array">
+                <item name="Content-Currency" xsi:type="object">Tigren\StoreGraphQl\Controller\HttpHeaderProcessor\CurrencyProcessor</item>
+                <item name="Store" xsi:type="object">Tigren\StoreGraphQl\Controller\HttpHeaderProcessor\StoreProcessor</item>
             </argument>
         </arguments>
     </type>

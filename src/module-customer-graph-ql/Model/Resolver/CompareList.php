@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
@@ -24,15 +24,33 @@ use Tigren\CustomerGraphQl\Helper\Data;
  */
 class CompareList implements ResolverInterface
 {
+    /**
+     * @var Session
+     */
     protected $_customerSession;
 
+    /**
+     * @var Data
+     */
     protected $_helper;
 
+    /**
+     * @var ProductRepositoryInterface
+     */
     protected $productRepository;
 
+    /**
+     * @var StockItemRepository
+     */
     protected $_stockItemRepository;
 
-
+    /**
+     * CompareList constructor.
+     * @param ProductRepositoryInterface $productRepository
+     * @param Data $helper
+     * @param StockItemRepository $stockItemRepository
+     * @param Session $session
+     */
     public function __construct(
         ProductRepositoryInterface $productRepository,
         Data $helper,
@@ -97,6 +115,10 @@ class CompareList implements ResolverInterface
         ];
     }
 
+    /**
+     * @param $product
+     * @return array
+     */
     private function getAttributeData($product)
     {
         $attributes = $this->_helper->getAttributes();
@@ -113,5 +135,4 @@ class CompareList implements ResolverInterface
         }
         return $result;
     }
-
 }

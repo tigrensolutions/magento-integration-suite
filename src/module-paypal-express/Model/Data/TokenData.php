@@ -1,20 +1,21 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\PaypalExpress\Model\Data;
 
-/**
- * @codeCoverageIgnoreStart
- */
+use Magento\Framework\Model\AbstractExtensibleModel;
+use Tigren\PaypalExpress\Api\Data\TokenDataInterface;
+
 /**
  * Class TokenData
  * @package Tigren\PaypalExpress\Model\Data
  */
-class TokenData extends \Magento\Framework\Model\AbstractExtensibleModel implements
-    \Tigren\PaypalExpress\Api\Data\TokenDataInterface
+class TokenData extends AbstractExtensibleModel implements
+    TokenDataInterface
 {
     /**
      * @return mixed
@@ -31,22 +32,5 @@ class TokenData extends \Magento\Framework\Model\AbstractExtensibleModel impleme
     public function setQuoteId($quoteId)
     {
         return $this->setData(self::QUOTE_ID, $quoteId);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCustomerId()
-    {
-        return $this->getData(self::CUSTOMER_ID);
-    }
-
-    /**
-     * @param $customerId
-     * @return $this|mixed
-     */
-    public function setCustomerId($customerId)
-    {
-        return $this->setData(self::CUSTOMER_ID, $customerId);
     }
 }

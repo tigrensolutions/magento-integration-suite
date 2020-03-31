@@ -1,20 +1,21 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\CouponCode\Model\Data;
 
-/**
- * @codeCoverageIgnoreStart
- */
+use Magento\Framework\Model\AbstractExtensibleModel;
+use Tigren\CouponCode\Api\Data\CouponCodeInterface;
+
 /**
  * Class CouponCodeData
  * @package Tigren\CouponCode\Model\Data
  */
-class CouponCode extends \Magento\Framework\Model\AbstractExtensibleModel implements
-    \Tigren\CouponCode\Api\Data\CouponCodeInterface
+class CouponCode extends AbstractExtensibleModel implements
+    CouponCodeInterface
 {
     /**
      * @return mixed

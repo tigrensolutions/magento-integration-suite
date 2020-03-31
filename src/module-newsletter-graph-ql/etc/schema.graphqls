@@ -1,0 +1,9 @@
+type Mutation {
+    customerSubscribe (email: String!): customerSubscribeOutput @resolver(class: "\\Tigren\\NewsletterGraphQl\\Model\\GraphQl\\Resolver\\Subscribe") @doc(description:"customer subscriber")
+    subscribe (is_subscribed: Boolean!): customerSubscribeOutput @resolver(class: "\\Tigren\\NewsletterGraphQl\\Model\\GraphQl\\Resolver\\Customer\\Subscribe") @doc(description:"customer subscriber")
+}
+
+type customerSubscribeOutput @doc(description: "customer subscriber output") {
+    success: Boolean
+    message: String
+}

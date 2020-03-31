@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
@@ -14,6 +14,7 @@ use Magento\Catalog\Helper\Product\Configuration;
 use Magento\Catalog\Model\Product\Exception as ProductException;
 use Magento\Checkout\Model\Cart;
 use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
+use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -21,10 +22,13 @@ use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Api\Data\CartItemInterface;
+use Magento\Quote\Model\Quote\ItemFactory as QuoteItem;
+use Magento\Quote\Model\QuoteFactory;
 use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\Item\OptionFactory;
 use Magento\Wishlist\Model\ItemFactory;
-use Magento\Wishlist\Model\ResourceModel\Item\Option\Collection;
 use Magento\Wishlist\Model\WishlistFactory;
 
 /**
@@ -37,38 +41,67 @@ class AddToCart implements ResolverInterface
      * @var ProductRepositoryInterface
      */
     protected $productRepository;
+
     /**
      * @var WishlistFactory
      */
     protected $wishlistFactory;
+
     /**
      * @var EventManager
      */
     protected $_eventManager;
+
     /**
      * @var ItemFactory
      */
     protected $itemFactory;
+
     /**
      * @var Cart
      */
     protected $cart;
+
     /**
      * @var Product
      */
     protected $productHelper;
+
     /**
      * @var Configuration
      */
     protected $productConfig;
+
+    /**
+     * @var QuoteFactory
+     */
+    protected $quoteFactory;
+
+    /**
+     * @var QuoteItem
+     */
+    protected $quoteItemFactory;
+
+    /**
+     *
+     * @var CartRepositoryInterface
+     */
+    protected $quoteRepository;
+
     /**
      * @var GetCustomer
      */
     private $getCustomer;
+
     /**
      * @var OptionFactory
      */
     private $optionFactory;
+
+    /**
+     * @var DataObjectHelper
+     */
+    private $dataObjectHelper;
 
     /**
      * AddToCart constructor.
@@ -81,6 +114,10 @@ class AddToCart implements ResolverInterface
      * @param OptionFactory $optionFactory
      * @param Product $productHelper
      * @param Configuration $productConfig
+     * @param DataObjectHelper $dataObjectHelper
+     * @param QuoteFactory $quoteFactory
+     * @param QuoteItem $quoteItemFactory
+     * @param CartRepositoryInterface $quoteRepository
      */
     public function __construct(
         GetCustomer $getCustomer,
@@ -91,7 +128,11 @@ class AddToCart implements ResolverInterface
         Cart $cart,
         OptionFactory $optionFactory,
         Product $productHelper,
-        Configuration $productConfig
+        Configuration $productConfig,
+        DataObjectHelper $dataObjectHelper,
+        QuoteFactory $quoteFactory,
+        QuoteItem $quoteItemFactory,
+        CartRepositoryInterface $quoteRepository
     ) {
         $this->getCustomer = $getCustomer;
         $this->productRepository = $productRepository;
@@ -102,6 +143,10 @@ class AddToCart implements ResolverInterface
         $this->optionFactory = $optionFactory;
         $this->productHelper = $productHelper;
         $this->productConfig = $productConfig;
+        $this->dataObjectHelper = $dataObjectHelper;
+        $this->quoteFactory = $quoteFactory;
+        $this->quoteItemFactory = $quoteItemFactory;
+        $this->quoteRepository = $quoteRepository;
     }
 
     /**
@@ -130,6 +175,7 @@ class AddToCart implements ResolverInterface
         $itemId = $args['item'];
         /* @var $item Item */
         $item = $this->itemFactory->create()->load($itemId);
+        $product = $item->getProduct();
 
         if (!$item->getId()) {
             throw new GraphQlInputException(__('This item id is not exist.'));
@@ -139,30 +185,29 @@ class AddToCart implements ResolverInterface
         if (!$wishlist) {
             throw new NotFoundException(__('Page not found.'));
         }
-
-        $item->setQty($args['qty']);
-
+        $quote = $this->quoteFactory->create()->loadByCustomer($customer->getId());
+        $cartItem = $this->quoteItemFactory->create();
+        $itemData = [
+            'qty' => (int)$args['qty'],
+            'sku' => $product->getSku(),
+            'quote_id' => $quote->getId()
+        ];
         try {
-            /** @var Collection $options */
-            $options = $this->optionFactory->create()->getCollection()->addItemFilter([$itemId]);
-            $item->setOptions($options->getOptionsByItem($itemId));
-            $params = [
-                'item' => $itemId,
-                'qty' => $args['qty']
-            ];
-            $buyRequest = $this->productHelper->addParamsToBuyRequest(
-                $params,
-                ['current_config' => $item->getBuyRequest()]
+            $this->dataObjectHelper->populateWithArray(
+                $cartItem,
+                $itemData,
+                CartItemInterface::class
             );
-            $item->mergeBuyRequest($buyRequest);
-            $item->addToCart($this->cart, true);
-            $this->cart->save()->getQuote()->collectTotals();
+            $quoteItems = $quote->getItems();
+            $quoteItems[] = $cartItem;
+            $quote->setItems($quoteItems);
+            $this->quoteRepository->save($quote);
+            $quote->collectTotals();
+            $item->delete();
             $wishlist->save();
         } catch (ProductException $e) {
             throw new ProductException(__('This product(s) is out of stock.'));
         }
-
         return true;
     }
-
 }

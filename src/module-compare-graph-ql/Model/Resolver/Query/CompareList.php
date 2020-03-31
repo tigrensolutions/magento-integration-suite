@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
@@ -10,6 +10,7 @@ namespace Tigren\CompareGraphQl\Model\Resolver\Query;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
+use Magento\CatalogInventory\Api\StockStateInterface;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -23,19 +24,38 @@ use Tigren\CompareGraphQl\Helper\Data;
  */
 class CompareList implements ResolverInterface
 {
+    /**
+     * @var Session
+     */
     protected $_customerSession;
 
+    /**
+     * @var Data
+     */
     protected $_helper;
 
+    /**
+     * @var ProductRepositoryInterface
+     */
     protected $productRepository;
 
+    /**
+     * @var StockStateInterface
+     */
     protected $_stockItem;
 
 
+    /**
+     * CompareList constructor.
+     * @param ProductRepositoryInterface $productRepository
+     * @param Data $helper
+     * @param StockStateInterface $stockItem
+     * @param Session $session
+     */
     public function __construct(
         ProductRepositoryInterface $productRepository,
         Data $helper,
-        \Magento\CatalogInventory\Api\StockStateInterface $stockItem,
+        StockStateInterface $stockItem,
         Session $session
     ) {
         $this->productRepository = $productRepository;
@@ -95,6 +115,10 @@ class CompareList implements ResolverInterface
         ];
     }
 
+    /**
+     * @param $product
+     * @return array
+     */
     private function getAttributeData($product)
     {
         $attributes = $this->_helper->getAttributes();
@@ -111,5 +135,4 @@ class CompareList implements ResolverInterface
         }
         return $result;
     }
-
 }

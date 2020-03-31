@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ @author Tigren Solutions <info@tigren.com>
+  ~ @author    Tigren Solutions <info@tigren.com>
   ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
-  ~ @license Open Software License ("OSL") v. 3.0
+  ~ @license   Open Software License ("OSL") v. 3.0
   -->
-<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
             <item name="provider" xsi:type="string">pwa_notification_listing.pwa_notification_listing_data_source</item>
@@ -68,7 +69,9 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="columnsData" xsi:type="array">
-                        <item name="provider" xsi:type="string">pwa_notification_listing.pwa_notification_listing.notification_columns</item>
+                        <item name="provider" xsi:type="string">
+                            pwa_notification_listing.pwa_notification_listing.notification_columns
+                        </item>
                     </item>
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/controls/columns</item>
                     <item name="displayArea" xsi:type="string">dataGridActions</item>
@@ -82,15 +85,23 @@
                 <item name="config" xsi:type="array">
                     <item name="displayArea" xsi:type="string">dataGridFilters</item>
                     <item name="dataScope" xsi:type="string">filters</item>
-                    <item name="columnsProvider" xsi:type="string">pwa_notification_listing.pwa_notification_listing.notification_columns</item>
+                    <item name="columnsProvider" xsi:type="string">
+                        pwa_notification_listing.pwa_notification_listing.notification_columns
+                    </item>
                     <item name="storageConfig" xsi:type="array">
-                        <item name="provider" xsi:type="string">pwa_notification_listing.pwa_notification_listing.listing_top.bookmarks</item>
+                        <item name="provider" xsi:type="string">
+                            pwa_notification_listing.pwa_notification_listing.listing_top.bookmarks
+                        </item>
                         <item name="namespace" xsi:type="string">current.filters</item>
                     </item>
                     <item name="childDefaults" xsi:type="array">
-                        <item name="provider" xsi:type="string">pwa_notification_listing.pwa_notification_listing.listing_top.listing_filters</item>
+                        <item name="provider" xsi:type="string">
+                            pwa_notification_listing.pwa_notification_listing.listing_top.listing_filters
+                        </item>
                         <item name="imports" xsi:type="array">
-                            <item name="visible" xsi:type="string">pwa_notification_listing.pwa_notification_listing.notification_columns.${ $.index }:visible</item>
+                            <item name="visible" xsi:type="string">
+                                pwa_notification_listing.pwa_notification_listing.notification_columns.${ $.index }:visible
+                            </item>
                         </item>
                     </item>
                 </item>
@@ -101,7 +112,9 @@
         <massaction name="listing_massaction">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="selectProvider" xsi:type="string">pwa_notification_listing.pwa_notification_listing.notification_columns.ids</item>
+                    <item name="selectProvider" xsi:type="string">
+                        pwa_notification_listing.pwa_notification_listing.notification_columns.ids
+                    </item>
                     <item name="indexField" xsi:type="string">notification_id</item>
                 </item>
             </argument>
@@ -113,7 +126,9 @@
                         <item name="url" xsi:type="url" path="progressivewebapp/notification/massDelete"/>
                         <item name="confirm" xsi:type="array">
                             <item name="title" xsi:type="string" translate="true">Delete items</item>
-                            <item name="message" xsi:type="string" translate="true">Are you sure you wan't to delete selected items?</item>
+                            <item name="message" xsi:type="string" translate="true">Are you sure you wan't to delete
+                                selected items?
+                            </item>
                         </item>
                     </item>
                 </argument>
@@ -125,10 +140,14 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="storageConfig" xsi:type="array">
-                        <item name="provider" xsi:type="string">pwa_notification_listing.pwa_notification_listing.listing_top.bookmarks</item>
+                        <item name="provider" xsi:type="string">
+                            pwa_notification_listing.pwa_notification_listing.listing_top.bookmarks
+                        </item>
                         <item name="namespace" xsi:type="string">current.paging</item>
                     </item>
-                    <item name="selectProvider" xsi:type="string">pwa_notification_listing.pwa_notification_listing.notification_columns.ids</item>
+                    <item name="selectProvider" xsi:type="string">
+                        pwa_notification_listing.pwa_notification_listing.notification_columns.ids
+                    </item>
                     <item name="displayArea" xsi:type="string">bottom</item>
                     <item name="options" xsi:type="array">
                         <item name="20" xsi:type="array">
@@ -164,7 +183,9 @@
             <item name="config" xsi:type="array">
                 <item name="childDefaults" xsi:type="array">
                     <item name="fieldAction" xsi:type="array">
-                        <item name="provider" xsi:type="string">pwa_notification_listing.pwa_notification_listing.notification_columns.actions</item>
+                        <item name="provider" xsi:type="string">
+                            pwa_notification_listing.pwa_notification_listing.notification_columns.actions
+                        </item>
                         <item name="target" xsi:type="string">applyAction</item>
                         <item name="params" xsi:type="array">
                             <item name="0" xsi:type="string">edit</item>

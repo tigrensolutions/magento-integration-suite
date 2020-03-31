@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\WishlistGraphQl\Model;
@@ -19,12 +19,18 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\CustomerData\Wishlist;
 use Magento\Wishlist\Helper\Data;
+use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\Item\OptionFactory;
+use Magento\Wishlist\Model\ItemCarrier;
 use Magento\Wishlist\Model\ItemFactory;
 use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Magento\Wishlist\Model\WishlistFactory;
 use Tigren\WishlistGraphQl\Api\WishlistManagementInterface;
 
+/**
+ * Class WishlistManagement
+ * @package Tigren\WishlistGraphQl\Model
+ */
 class WishlistManagement implements WishlistManagementInterface
 {
     /**
@@ -71,22 +77,30 @@ class WishlistManagement implements WishlistManagementInterface
      * @var Cart
      */
     protected $cart;
+
     /**
      * @var Product
      */
     protected $productHelper;
+
     /**
      * @var Configuration
      */
     protected $productConfig;
+
     /**
      * @var LocaleQuantityProcessor
      */
     protected $quantityProcessor;
+
     /**
      * @var WishlistFactory
      */
     protected $wishlistFactory;
+    /**
+     * @var ItemCarrier
+     */
+    protected $itemCarrier;
     /**
      * @var OptionFactory
      */
@@ -95,11 +109,26 @@ class WishlistManagement implements WishlistManagementInterface
      * @var UserContextInterface
      */
     private $userContext;
-    /**
-     * @var \Magento\Wishlist\Model\ItemCarrier
-     */
-    protected $itemCarrier;
 
+    /**
+     * WishlistManagement constructor.
+     * @param ProductRepositoryInterface $productRepository
+     * @param WishlistProviderInterface $wishlistProvider
+     * @param Session $customerSession
+     * @param ManagerInterface $eventManager
+     * @param ObjectManagerInterface $objectManager
+     * @param Wishlist $customerWishlist
+     * @param Data $wishlistHelper
+     * @param ItemFactory $itemFactory
+     * @param Cart $cart
+     * @param OptionFactory $optionFactory
+     * @param Product $productHelper
+     * @param Configuration $productConfig
+     * @param LocaleQuantityProcessor $quantityProcessor
+     * @param UserContextInterface $userContext
+     * @param ItemCarrier $itemCarrier
+     * @param WishlistFactory $wishlistFactory
+     */
     public function __construct(
         ProductRepositoryInterface $productRepository,
         WishlistProviderInterface $wishlistProvider,
@@ -115,7 +144,7 @@ class WishlistManagement implements WishlistManagementInterface
         Configuration $productConfig,
         LocaleQuantityProcessor $quantityProcessor,
         UserContextInterface $userContext,
-        \Magento\Wishlist\Model\ItemCarrier $itemCarrier,
+        ItemCarrier $itemCarrier,
         WishlistFactory $wishlistFactory
     ) {
         $this->productRepository = $productRepository;
@@ -148,7 +177,7 @@ class WishlistManagement implements WishlistManagementInterface
         }
 
         foreach ($wishlistUpdate as $itemId => $itemData) {
-            $item = $this->_objectManager->create(\Magento\Wishlist\Model\Item::class)->load($itemId);
+            $item = $this->_objectManager->create(Item::class)->load($itemId);
             $description = $itemData['des'] ?? '';
             $qty = null;
             if (isset($itemData['qty'])) {
@@ -171,5 +200,4 @@ class WishlistManagement implements WishlistManagementInterface
         }
         return true;
     }
-
 }

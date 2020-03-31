@@ -1,21 +1,39 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\ProgressiveWebApp\Block\Adminhtml;
 
-class Color extends \Magento\Config\Block\System\Config\Form\Field
+use Magento\Backend\Block\Template\Context;
+use Magento\Config\Block\System\Config\Form\Field;
+use Magento\Framework\Data\Form\Element\AbstractElement;
+
+/**
+ * Class Color
+ * @package Tigren\ProgressiveWebApp\Block\Adminhtml
+ */
+class Color extends Field
 {
+    /**
+     * Color constructor.
+     * @param Context $context
+     * @param array $data
+     */
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context, array $data = []
+        Context $context,
+        array $data = []
     ) {
         parent::__construct($context, $data);
     }
 
-    protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
+    /**
+     * @param AbstractElement $element
+     * @return string
+     */
+    protected function _getElementHtml(AbstractElement $element)
     {
         $html = $element->getElementHtml();
         $value = $element->getData('value');
@@ -37,5 +55,4 @@ class Color extends \Magento\Config\Block\System\Config\Form\Field
             </script>';
         return $html;
     }
-
 }

@@ -1,18 +1,25 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\ProgressiveWebApp\Controller\Adminhtml\Notification;
 
+use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Ui\Component\MassAction\Filter;
 use Tigren\ProgressiveWebApp\Model\ResourceModel\Notification\CollectionFactory;
 
-class MassDelete extends \Magento\Backend\App\Action
+/**
+ * Class MassDelete
+ * @package Tigren\ProgressiveWebApp\Controller\Adminhtml\Notification
+ */
+class MassDelete extends Action
 {
     /**
      * Massactions filter
@@ -42,7 +49,8 @@ class MassDelete extends \Magento\Backend\App\Action
     }
 
     /**
-     * @return \Magento\Backend\Model\View\Result\Redirect
+     * @return Redirect
+     * @throws LocalizedException
      */
     public function execute()
     {

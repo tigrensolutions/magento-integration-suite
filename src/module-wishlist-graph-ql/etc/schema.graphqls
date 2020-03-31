@@ -3,29 +3,57 @@ type Mutation {
     addToCartFromWishlist(item: Int!,qty: Int!): Boolean @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\AddToCart") @doc(description:"Add an item to cart from wishlist")
     removeItemWishlist(item: Int!): Boolean @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\RemoveItem") @doc(description:"Remove an item from wishlist")
     addWistlistToCart(items: String!): [Message] @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\AllCart") @doc(description:"Add all wistlist items to cart")
+    shareWishlist(email: String!,message: String): Message @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\ShareWishlist")
+    addSharedWistlistToCart(code: String!, cart_id: String,items: String!): [Message] @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\SharedAllCart")
+    addToWishlistFromCart(item: Int!,cartId: String!): Boolean @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Mutation\\AddToWishlistFromCart") @doc(description:"Add an item to wishlist from cart")
 }
 
- type Message {
+type Message {
     type : String @doc(description: "The type of message")
     text : String @doc(description: "The content of message")
- }
+}
 
- type Customer @doc(description: "Customer defines the customer other details") {
-     wishlist: [WishlistItemInterface] @doc(description: "An array containing the customer's order") @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Query\\CustomerWishlist")
- }
+type Customer @doc(description: "Customer defines the customer other details") {
+    wishlist (
+        pageSize : Int = 10,
+        currentPage: Int = 1
+    ): CustomerWishlist @doc(description: "An array containing the customer's order") @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Query\\CustomerWishlist")
+}
 
- type WishlistItemInterface {
-     id : Int
-     small_image: String
-     url_key: String
-     name: String
-     qty: Int
-     product_id: Int
-     price: Float
-     currency: String
-     special_price: Float
-     final_price: Float
-     type_id: String
-     description: String
-     is_available: String
- }
+type Query {
+    sharedWishlist(
+        pageSize : Int = 10,
+        currentPage: Int = 1,
+        code: String
+    ) : SharedWishlistOutput @resolver(class: "\\Tigren\\WishlistGraphQl\\Model\\Resolver\\Query\\SharedWishlist")
+}
+
+type SharedWishlistOutput {
+    customer_firstname: String
+    items: [WishlistItemInterface] @doc(description: "An array of wishlist item of current customer.")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    total_count: Int @doc(description: "The number of products returned.")
+}
+
+type CustomerWishlist {
+    items: [WishlistItemInterface] @doc(description: "An array of wishlist item of current customer.")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    total_count: Int @doc(description: "The number of products returned.")
+}
+
+type WishlistItemInterface {
+    id : Int
+    sku: String
+    small_image: String
+    url_key: String
+    name: String
+    qty: Int
+    product_id: Int
+    price: Float
+    currency: String
+    special_price: Float
+    final_price: Float
+    type_id: String
+    description: String
+    is_available: String
+}

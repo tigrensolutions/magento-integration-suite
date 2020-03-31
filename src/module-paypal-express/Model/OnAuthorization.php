@@ -1,17 +1,22 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\PaypalExpress\Model;
 
+use Exception;
+use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Paypal\Model\Config as PayPalConfig;
 use Magento\Paypal\Model\Express\Checkout as PayPalCheckout;
 use Magento\Paypal\Model\Api\ProcessableException as ApiProcessableException;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Paypal\Model\Express\Checkout\Factory as CheckoutFactory;
 use Magento\Framework\Session\Generic as PayPalSession;
@@ -20,8 +25,11 @@ use Magento\Customer\Model\Url as CustomerUrl;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Quote\Api\GuestCartRepositoryInterface;
+use Tigren\PaypalExpress\Api\Data\PaymentDataInterface;
 use Tigren\PaypalExpress\Api\OnAuthorizationInterface;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Authorization\Model\UserContextInterface;
+use Tigren\PaypalExpress\Helper\Data;
 
 /**
  * Interface ReviewManagement
@@ -29,44 +37,43 @@ use Magento\Quote\Api\Data\CartInterface;
  */
 class OnAuthorization implements OnAuthorizationInterface
 {
-
     /**
-     * @var \Magento\Paypal\Model\Express\Checkout
+     * @var PayPalCheckout
      */
     protected $_checkout;
 
     /**
-     * @var \Magento\Paypal\Model\Config
+     * @var PayPalConfig
      */
     protected $_config;
 
     /**
-     * @var \Magento\Quote\Model\Quote
+     * @var Quote
      */
     protected $_quote = false;
 
     /**
-     * @var \Magento\Customer\Model\Session
+     * @var CustomerSession
      */
     protected $_customerSession;
 
     /**
-     * @var \Magento\Checkout\Model\Session
+     * @var CheckoutSession
      */
     protected $_checkoutSession;
 
     /**
-     * @var \Magento\Sales\Model\OrderFactory
+     * @var OrderFactory
      */
     protected $_orderFactory;
 
     /**
-     * @var \Magento\Paypal\Model\Express\Checkout\Factory
+     * @var CheckoutFactory
      */
     protected $_checkoutFactory;
 
     /**
-     * @var \Magento\Framework\Session\Generic
+     * @var PayPalSession
      */
     protected $_paypalSession;
 
@@ -91,37 +98,52 @@ class OnAuthorization implements OnAuthorizationInterface
      * @inheritdoc
      */
     protected $_checkoutType = PayPalCheckout::class;
-
+    /**
+     * @var ManagerInterface
+     */
+    protected $_eventManager;
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $_objectManager;
+    /**
+     * @var Data
+     */
+    protected $_helper;
+    /**
+     * @var UserContextInterface
+     */
+    protected $userContext;
     /**
      * @var CartRepositoryInterface
      */
     private $cartRepository;
-
     /**
      * Url Builder
      *
      * @var UrlInterface
      */
     private $urlBuilder;
-
     /**
      * @var GuestCartRepositoryInterface
      */
     private $guestCartRepository;
 
     /**
-     * @var \Magento\Framework\Event\ManagerInterface
+     * OnAuthorization constructor.
+     * @param CustomerSession $customerSession
+     * @param CheckoutSession $checkoutSession
+     * @param OrderFactory $orderFactory
+     * @param CheckoutFactory $checkoutFactory
+     * @param PayPalSession $paypalSession
+     * @param CartRepositoryInterface $cartRepository
+     * @param UrlInterface $urlBuilder
+     * @param ManagerInterface $manager
+     * @param ObjectManagerInterface $objectManager
+     * @param Data $helper
+     * @param GuestCartRepositoryInterface $guestCartRepository
+     * @param UserContextInterface $userContext
      */
-    protected $_eventManager;
-
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    protected $_objectManager;
-
-    protected $_helper;
-
-
     public function __construct(
         CustomerSession $customerSession,
         CheckoutSession $checkoutSession,
@@ -130,10 +152,11 @@ class OnAuthorization implements OnAuthorizationInterface
         PayPalSession $paypalSession,
         CartRepositoryInterface $cartRepository,
         UrlInterface $urlBuilder,
-        \Magento\Framework\Event\ManagerInterface $manager,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Tigren\PaypalExpress\Helper\Data $helper,
-        GuestCartRepositoryInterface $guestCartRepository
+        ManagerInterface $manager,
+        ObjectManagerInterface $objectManager,
+        Data $helper,
+        GuestCartRepositoryInterface $guestCartRepository,
+        UserContextInterface $userContext
     ) {
         $this->_customerSession = $customerSession;
         $this->_checkoutSession = $checkoutSession;
@@ -146,14 +169,19 @@ class OnAuthorization implements OnAuthorizationInterface
         $this->_eventManager = $manager;
         $this->_objectManager = $objectManager;
         $this->_helper = $helper;
+        $this->userContext = $userContext;
     }
 
-    public function authorization(\Tigren\PaypalExpress\Api\Data\PaymentDataInterface $paymentData)
+    /**
+     * @param PaymentDataInterface $paymentData
+     * @return false|mixed|string
+     */
+    public function authorization(PaymentDataInterface $paymentData)
     {
         $paymentToken = $paymentData->getPaymentToken();
         $payerId = $paymentData->getPayerId();
         $quoteId = $paymentData->getQuoteId();
-        $customerId = $paymentData->getCustomerId();
+        $customerId = $this->userContext->getUserId() ?: null;
         try {
             $quote = $customerId ? $this->cartRepository->get($quoteId) : $this->guestCartRepository->get($quoteId);
             $response = [
@@ -166,31 +194,31 @@ class OnAuthorization implements OnAuthorizationInterface
             $this->_checkout = $this->_helper->_initCheckout($quote);
             /**  Populate quote  with information about billing and shipping addresses*/
             $this->_checkout->returnFromPaypal($paymentToken, $payerId);
-                $this->_checkout->place($paymentToken);
-                $order = $this->_checkout->getOrder();
-                /** "last successful quote" */
-                $this->_getCheckoutSession()->setLastQuoteId($quote->getId())->setLastSuccessQuoteId($quote->getId());
+            $this->_checkout->place($paymentToken);
+            $order = $this->_checkout->getOrder();
+            /** "last successful quote" */
+            $this->_getCheckoutSession()->setLastQuoteId($quote->getId())->setLastSuccessQuoteId($quote->getId());
 
-                $this->_getCheckoutSession()->setLastOrderId($order->getId())
-                    ->setLastRealOrderId($order->getIncrementId())
-                    ->setLastOrderStatus($order->getStatus());
+            $this->_getCheckoutSession()->setLastOrderId($order->getId())
+                ->setLastRealOrderId($order->getIncrementId())
+                ->setLastOrderStatus($order->getStatus());
 
-                $this->_eventManager->dispatch(
-                    'paypal_express_place_order_success',
-                    [
-                        'order' => $order,
-                        'quote' => $quote
-                    ]
-                );
+            $this->_eventManager->dispatch(
+                'paypal_express_place_order_success',
+                [
+                    'order' => $order,
+                    'quote' => $quote
+                ]
+            );
             $response['redirectUrl'] = $this->urlBuilder->getUrl('checkout/onepage/success/');
             $response['order_id'] = $order->getId();
         } catch (ApiProcessableException $e) {
             $response['success'] = false;
             $response['error_message'] = $e->getUserMessage();
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+        } catch (LocalizedException $e) {
             $response['success'] = false;
             $response['error_message'] = $e->getMessage();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $response['success'] = false;
             $response['error_message'] = __('We can\'t process Express Checkout approval.');
         }
@@ -201,11 +229,10 @@ class OnAuthorization implements OnAuthorizationInterface
     /**
      * Return checkout session object
      *
-     * @return \Magento\Checkout\Model\Session
+     * @return CheckoutSession
      */
     protected function _getCheckoutSession()
     {
         return $this->_checkoutSession;
     }
-
 }

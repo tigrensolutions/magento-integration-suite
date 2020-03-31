@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
@@ -19,6 +19,7 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\ObjectManagerInterface;
 use Tigren\CompareGraphQl\Helper\Data;
+use Magento\Authorization\Model\UserContextInterface;
 
 /**
  * Class ClearCompare
@@ -49,22 +50,30 @@ class ClearCompare implements ResolverInterface
     protected $_itemCollectionFactory;
 
     /**
+     * @var UserContextInterface
+     */
+    protected $userContext;
+
+    /**
      * ClearCompare constructor.
      * @param ObjectManagerInterface $objectManager
      * @param Session $session
      * @param CollectionFactory $itemCollectionFactory
+     * @param UserContextInterface $userContext
      * @param Data $helper
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
         Session $session,
         CollectionFactory $itemCollectionFactory,
+        UserContextInterface $userContext,
         Data $helper
     ) {
         $this->_itemCollectionFactory = $itemCollectionFactory;
         $this->_helper = $helper;
         $this->_customerSession = $session;
         $this->_objectManager = $objectManager;
+        $this->userContext = $userContext;
     }
 
     /**
@@ -79,7 +88,7 @@ class ClearCompare implements ResolverInterface
     ) {
         /** @var Collection $items */
         $items = $this->_itemCollectionFactory->create();
-        $customerId = $this->_customerSession->getCustomerId();
+        $customerId = $this->userContext->getUserId() ?: null;
         if ($customerId) {
             $items->setCustomerId($customerId);
         } else {
@@ -95,5 +104,4 @@ class ClearCompare implements ResolverInterface
         }
         return true;
     }
-
 }

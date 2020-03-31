@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 declare(strict_types=1);
 
@@ -31,6 +36,7 @@ class Product implements ResolverInterface
     ) {
         $this->productFactory = $productFactory;
     }
+
     /**
      * @inheritdoc
      */
@@ -59,7 +65,6 @@ class Product implements ResolverInterface
     /**
      * @param int $productId
      * @return array
-     * @throws GraphQlNoSuchEntityException
      */
     private function getProductData(int $productId): array
     {
@@ -73,5 +78,4 @@ class Product implements ResolverInterface
             'item' => $productData
         ];
     }
-
 }

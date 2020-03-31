@@ -1,11 +1,17 @@
 <?xml version="1.0"?>
 
+<!--
+  ~ @author    Tigren Solutions <info@tigren.com>
+  ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+  ~ @license   Open Software License ("OSL") v. 3.0
+  -->
+
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
     <route url="/V1/tigren/wishlist/mine/update" method="POST">
         <service class="Tigren\WishlistGraphQl\Api\WishlistManagementInterface" method="update"/>
         <resources>
-            <resource ref="self" />
+            <resource ref="self"/>
         </resources>
     </route>
 

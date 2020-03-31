@@ -1,0 +1,63 @@
+<?php
+/**
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+use Magento\Catalog\Model\Product;
+use Magento\Wishlist\Model\Item;
+use Tigren\WishlistGraphQl\Block\Share\Email\Items;
+
+/* @var Items $block */
+?>
+<?php $l = $block->getWishlistItemsCount() ?>
+<div>
+    <table>
+        <tr>
+            <?php $i = 0;
+            foreach ($block->getWishlistItems() as $item) :
+            $i++ ?>
+            <?php /* @var $item Item */ ?>
+            <?php /* @var $_product Product */ ?>
+            <?php $_product = $item->getProduct();
+            $imageUrl = $block->getImageUrl($_product); ?>
+            <td class="col product">
+                <p>
+                    <a href="<?= $block->escapeUrl($block->getProductUrl($_product)) ?>">
+                        <img src="<?= $imageUrl ?>" width="150px" alt="<?= $_product->getName() ?>"/>
+                    </a>
+                </p>
+
+                <p>
+                    <a href="<?= $block->escapeUrl($block->getProductUrl($_product)) ?>">
+                        <strong><?= $block->escapeHtml($_product->getName()) ?></strong>
+                    </a>
+                </p>
+                <?php if ($block->hasDescription($item)) : ?>
+                    <p>
+                        <strong><?= $block->escapeHtml(__('Comment')) ?>:</strong>
+                        <br/><?= /* @noEscape */
+                        $block->getEscapedDescription($item) ?>
+                    </p>
+                <?php endif; ?>
+                <p>
+                    <a href="<?= $block->escapeUrl($block->getProductUrl($_product)) ?>">
+                        <?= $block->escapeHtml(__('View Product')) ?>
+                    </a>
+                </p>
+            </td>
+            <?php if ($i % 3 != 0) : ?>
+                <td></td>
+            <?php else : ?>
+        </tr>
+        <tr>
+            <td colspan="5">&nbsp;</td>
+        </tr>
+        <?php if ($i < $l) : ?>
+        <tr>
+            <?php endif ?>
+            <?php endif ?>
+            <?php endforeach ?>
+    </table>
+</div>

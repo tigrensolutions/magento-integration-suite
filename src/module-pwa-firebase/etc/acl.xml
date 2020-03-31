@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <!--
-  ~ @author Tigren Solutions <info@tigren.com>
+  ~ @author    Tigren Solutions <info@tigren.com>
   ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
-  ~ @license Open Software License ("OSL") v. 3.0
+  ~ @license   Open Software License ("OSL") v. 3.0
   -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
@@ -15,7 +16,8 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Tigren_ProgressiveWebApp::config_progressivewebapp" title="Progressive Web App"/>
+                            <resource id="Tigren_ProgressiveWebApp::config_progressivewebapp"
+                                      title="Progressive Web App"/>
                         </resource>
                     </resource>
                 </resource>

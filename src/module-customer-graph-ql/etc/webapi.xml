@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
-  ~ @author Tigren Solutions <info@tigren.com>
+  ~ @author    Tigren Solutions <info@tigren.com>
   ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
-  ~ @license Open Software License ("OSL") v. 3.0
+  ~ @license   Open Software License ("OSL") v. 3.0
   -->
 
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -12,19 +12,19 @@
     <route url="/V1/tigren/customer/logout" method="POST">
         <service class="Tigren\CustomerGraphQl\Api\Customer\AccountInterface" method="logout"/>
         <resources>
-            <resource ref="anonymous" />
+            <resource ref="anonymous"/>
         </resources>
     </route>
     <route url="/V1/tigren/customer/login" method="POST">
         <service class="Tigren\CustomerGraphQl\Api\Customer\AccountInterface" method="login"/>
         <resources>
-            <resource ref="anonymous" />
+            <resource ref="anonymous"/>
         </resources>
     </route>
     <route url="/V1/customer/resetPassword" method="POST">
         <service class="Tigren\CustomerGraphQl\Api\Customer\AccountInterface" method="resetPassword"/>
         <resources>
-            <resource ref="anonymous" />
+            <resource ref="anonymous"/>
         </resources>
     </route>
 </routes>

@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\ProgressiveWebApp\Ui\Component\Listing\Column;
@@ -14,14 +14,24 @@ use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 
+/**
+ * Class Icon
+ * @package Tigren\ProgressiveWebApp\Ui\Component\Listing\Column
+ */
 class Icon extends Column
 {
+    /**
+     *
+     */
     const NAME = 'icon';
 
+    /**
+     *
+     */
     const ALT_FIELD = 'name';
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     protected $storeManager;
 
@@ -42,8 +52,7 @@ class Icon extends Column
         StoreManagerInterface $storeManager,
         array $components = [],
         array $data = []
-    )
-    {
+    ) {
         $this->storeManager = $storeManager;
         $this->imageHelper = $imageHelper;
         $this->urlBuilder = $urlBuilder;

@@ -3,6 +3,17 @@ type Query {
         id: Int! @doc(description: "Id of the order")
     ): CustomOrder
     @resolver(class: "Tigren\\CustomerGraphQl\\Model\\Resolver\\Sales\\Order")
+    addresses_list (
+        pageSize : Int = 10,
+        currentPage: Int = 1
+    ): CustomerAddresses @doc(description: "An array containing the customer's shipping and billing addresses") @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\CustomerAddresses")
+    salesGuestView (
+        oar_order_id : Int!,
+        oar_billing_lastname: String!,
+        oar_type: String!,
+        oar_email: String,
+        oar_zip: String
+    ): CustomerOrder @doc(description: "An array containing the customer order data") @resolver(class: "Tigren\\CustomerGraphQl\\Model\\Resolver\\Sales\\Guest\\Order")
 }
 type Mutation {
     assignOrder(order: Int!): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Mutation\\AssignOrder") @doc(description:"Assign order to customer")
@@ -10,64 +21,150 @@ type Mutation {
     reorder(order: Int!): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Mutation\\Reorder") @doc(description:"Reorder")
     validateLinkToken(token: String!): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Customer\\ValidateLinkToken") @doc(description:"validate customer token")
     createNewPassword(token: String!,password: String): Boolean @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\Customer\\CreateNewPassword") @doc(description:"create new password")
- }
+}
 
- type Message {
+type Message {
     type : String @doc(description: "The type of message")
     text : String @doc(description: "The content of message")
- }
+}
 
 type CustomOrder {
     increment_id: String @doc(description: "The increment id of the order")
 }
 
- type Customer @doc(description: "Customer defines the customer other details") {
-     orders: [CustomerOrder] @doc(description: "An array containing the customer's order") @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\CustomerOrder")
- }
+type Customer @doc(description: "Customer defines the customer other details") {
+    orders (
+        pageSize : Int = 10,
+        currentPage: Int = 1
+    ) : CustomerOrders @doc(description: "An array containing the customer's order") @resolver(class: "\\Tigren\\CustomerGraphQl\\Model\\Resolver\\CustomerOrders")
+}
 
- type CustomerOrder @doc(description: "CustomerOrder contains detailed information about a customer's order"){
-     entity_id: Int @doc(description: "The ID assigned to the order object")
-     increment_id: String @doc(description: "The ID increment assigned to the order object")
-     customer_firstname: String
-     customer_lastname: String
-     grand_total: String
-     subtotal: String
-     status: String
-     created_at: String
-     payment_method: String
-     shipping_description: String
-     shipping_amount: String
-     discount_amount: String
-     billing_address: OrderAddress
-     shipping_address: OrderAddress
-     items: [OrderItem]
- }
+type CustomerOrders {
+    items: [CustomerOrder] @doc(description: "An array of orders of current customer.")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    total_count: Int @doc(description: "The number of products returned.")
+}
 
- type OrderItem {
-     id : Int!
-     name: String
-     sku: String
-     price: Float
-     subtotal: Float
-     quantity: Int
- }
+type CustomerOrder @doc(description: "CustomerOrder contains detailed information about a customer's order"){
+    entity_id: Int @doc(description: "The ID assigned to the order object")
+    increment_id: String @doc(description: "The ID increment assigned to the order object")
+    customer_firstname: String
+    customer_lastname: String
+    grand_total: String
+    subtotal: String
+    status: String
+    created_at: String
+    payment: PaymentData
+    shipping_description: String
+    shipping_amount: Float
+    discount_amount: Float
+    shipping_incl_tax: Float
+    tax_amount: Float
+    order_currency_code: String
+    billing_address: OrderAddress
+    shipping_address: OrderAddress
+    items: [OrderItem]
+    invoices: [Invoice]
+    shipments: [Shipment]
+    creditmemos: [Creditmemo]
+}
 
- type OrderAddress @doc(description : "define data address of order") {
-     id: Int @doc(description: "The ID assigned to the address object")
-     customer_id: Int @doc(description: "The customer ID")
-     region: String @doc(description: "The region name")
-     region_id: Int @doc(description: "A number that uniquely identifies the state, province, or other area")
-     country_id: String @doc(description: "The customer's country")
-     street: String @doc(description: "An array of strings that define the street number and name")
-     company: String @doc(description: "The customer's company")
-     telephone: String @doc(description: "The telephone number")
-     fax: String @doc(description: "The fax number")
-     postcode: String @doc(description: "The customer's ZIP or postal code")
-     city: String @doc(description: "The city or town")
-     firstname: String @doc(description: "The first name of the person associated with the shipping/billing address")
-     lastname: String @doc(description: "The family name of the person associated with the shipping/billing address")
-     middlename: String @doc(description: "The middle name of the person associated with the shipping/billing address")
-     prefix: String @doc(description: "An honorific, such as Dr., Mr., or Mrs.")
-     suffix: String @doc(description: "A value such as Sr., Jr., or III")
-     vat_id: String @doc(description: "The customer's Tax/VAT number (for corporate customers)")
- }
+type OrderItem {
+    id : Int!
+    name: String
+    sku: String
+    price: Float
+    subtotal: Float
+    qty_ordered: Int
+    qty_shipped: Int
+    qty_invoiced: Int
+    qty_refunded: Int
+    qty_backordered: Int
+    qty_canceled: Int
+    options: [OptionValue]
+}
+
+type OrderAddress @doc(description : "define data address of order") {
+    id: Int @doc(description: "The ID assigned to the address object")
+    customer_id: Int @doc(description: "The customer ID")
+    region: String @doc(description: "The region name")
+    region_id: Int @doc(description: "A number that uniquely identifies the state, province, or other area")
+    country_id: String @doc(description: "The customer's country")
+    street: String @doc(description: "An array of strings that define the street number and name")
+    company: String @doc(description: "The customer's company")
+    telephone: String @doc(description: "The telephone number")
+    fax: String @doc(description: "The fax number")
+    postcode: String @doc(description: "The customer's ZIP or postal code")
+    city: String @doc(description: "The city or town")
+    firstname: String @doc(description: "The first name of the person associated with the shipping/billing address")
+    lastname: String @doc(description: "The family name of the person associated with the shipping/billing address")
+    middlename: String @doc(description: "The middle name of the person associated with the shipping/billing address")
+    prefix: String @doc(description: "An honorific, such as Dr., Mr., or Mrs.")
+    suffix: String @doc(description: "A value such as Sr., Jr., or III")
+    vat_id: String @doc(description: "The customer's Tax/VAT number (for corporate customers)")
+}
+type PaymentData {
+    method_title: String
+    method_code: String
+    additional_data: String
+}
+type Invoice {
+    id : Int
+    increment_id : String
+    sub_total: Float
+    grand_total: Float
+    discount_amount: Float
+    shipping_amount: Float
+    shipping_incl_tax: Float
+    tax_amount: Float
+    items : [InvoiceItem]
+}
+type InvoiceItem {
+    name : String
+    sku : String
+    price : Float
+    qty : Int
+    row_total : Float
+    options: [OptionValue]
+}
+type Shipment {
+    id : Int
+    increment_id : String
+    items : [ShipmentItem]
+}
+type ShipmentItem {
+    name : String
+    sku : String
+    qty : Int
+    options: [OptionValue]
+}
+type Creditmemo {
+    id : Int
+    increment_id : String
+    sub_total: Float
+    grand_total: Float
+    discount_amount: Float
+    shipping_amount: Float
+    shipping_incl_tax: Float
+    tax_amount: Float
+    items : [CreditmemoItem]
+}
+type CreditmemoItem {
+    name : String
+    sku : String
+    price : Float
+    qty : Int
+    sub_total : Float
+    discount : Float
+    row_total : Float
+    options: [OptionValue]
+}
+type OptionValue {
+    label: String
+    value: String
+}
+type CustomerAddresses {
+    items: [CustomerAddress] @doc(description: "An array of addresses of current customer.")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    total_count: Int @doc(description: "The number of addresses returned.")
+}

@@ -1,31 +1,61 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 declare(strict_types=1);
 
 namespace Tigren\ProgressiveWebApp\Model\Graphql\Resolver\Firebase;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Framework\HTTP\Client\Curl;
+use Tigren\ProgressiveWebApp\Helper\Data;
 
+/**
+ * Class Subscribe
+ * @package Tigren\ProgressiveWebApp\Model\Graphql\Resolver\Firebase
+ */
 class Subscribe implements ResolverInterface
 {
+    /**
+     * @var JsonFactory
+     */
     protected $resultJsonFactory;
+
+    /**
+     * @var ScopeConfigInterface
+     */
     protected $scope;
+
+    /**
+     * @var Curl
+     */
     protected $_curl;
+
+    /**
+     * @var Data
+     */
     protected $_pwaHelper;
 
+    /**
+     * Subscribe constructor.
+     * @param JsonFactory $resultJsonFactory
+     * @param ScopeConfigInterface $scope
+     * @param Curl $curl
+     * @param Data $pwaHelper
+     */
     public function __construct(
-        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scope,
-        \Magento\Framework\HTTP\Client\Curl $curl,
-        \Tigren\ProgressiveWebApp\Helper\Data $pwaHelper
+        JsonFactory $resultJsonFactory,
+        ScopeConfigInterface $scope,
+        Curl $curl,
+        Data $pwaHelper
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->scope = $scope;
@@ -54,5 +84,4 @@ class Subscribe implements ResolverInterface
         $this->_curl->post($subscribeUrl, []);
         return true;
     }
-
 }

@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\CustomerGraphQL\Model\Customer;
@@ -44,9 +44,12 @@ use Tigren\CustomerGraphQl\Api\Customer\AccountInterface;
 use Tigren\CustomerGraphQl\Helper\Data;
 use Zend_Validate;
 
+/**
+ * Class Account
+ * @package Tigren\CustomerGraphQL\Model\Customer
+ */
 class Account implements AccountInterface
 {
-
     /**
      *
      */
@@ -81,62 +84,77 @@ class Account implements AccountInterface
      * @var AccountManagementInterface
      */
     protected $customerAccountManagement;
+
     /**
      * @var DataObjectProcessor
      */
     protected $dataProcessor;
+
     /**
      * @var CustomerViewHelper
      */
     protected $customerViewHelper;
+
     /**
      * @var SecurityManager
      */
     protected $securityManager;
+
     /**
      * @var array
      */
     protected $securityCheckers;
+
     /**
      * @var ConfigInterface
      */
     protected $securityConfig;
+
     /**
      * @var CollectionFactory
      */
     protected $collectionFactory;
+
     /**
      * @var StoreManager
      */
     private $storeManager;
+
     /**
      * @var CustomerRepositoryInterface
      */
     private $customerRepository;
+
     /**
      * @var Random
      */
     private $mathRandom;
+
     /**
      * @var CustomerRegistry
      */
     private $customerRegistry;
+
     /**
      * @var DateTimeFactory
      */
     private $dateTimeFactory;
+
     /**
      * @var SenderResolverInterface
      */
     private $senderResolver;
+
     /**
      * @var TransportBuilder
      */
     private $transportBuilder;
+
     /**
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
+
     /**
      * @var RemoteAddress
      */
@@ -251,8 +269,6 @@ class Account implements AccountInterface
     {
         $connection = $this->helper->getConnection();
         $visitorId = $this->helper->getVisitorId($sessionId);
-
-        $connection->update('customer_visitor', ['customer_id' => $customerId], ['session_id' => $sessionId]);
 
         $select = $connection->select()->from(
             'catalog_compare_item'
@@ -408,8 +424,10 @@ class Account implements AccountInterface
 
     /**
      * @param CustomerInterface $customer
-     * @throws NoSuchEntityException
+     * @param $baseUrl
+     * @throws LocalizedException
      * @throws MailException
+     * @throws NoSuchEntityException
      */
     public function passwordResetConfirmation(CustomerInterface $customer, $baseUrl)
     {
@@ -456,6 +474,7 @@ class Account implements AccountInterface
      * @param array $templateParams
      * @param null $storeId
      * @param null $email
+     * @throws LocalizedException
      * @throws MailException
      */
     private function sendEmailTemplate(

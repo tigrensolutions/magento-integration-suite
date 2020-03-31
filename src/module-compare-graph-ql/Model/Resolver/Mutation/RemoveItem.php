@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 declare(strict_types=1);
@@ -73,7 +73,6 @@ class RemoveItem implements ResolverInterface
      * RemoveItem constructor.
      * @param ProductRepositoryInterface $productRepository
      * @param EventManager $eventManager
-     * @param Cart $cart
      * @param StoreManagerInterface $storeManager
      * @param ItemFactory $compareItemFactory
      * @param Session $session
@@ -152,5 +151,4 @@ class RemoveItem implements ResolverInterface
 
         return true;
     }
-
 }

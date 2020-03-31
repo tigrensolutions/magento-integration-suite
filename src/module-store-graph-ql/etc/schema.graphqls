@@ -1,3 +1,10 @@
+type Query {
+    store: Store @resolver(class: "Tigren\\StoreGraphQl\\Model\\Resolver\\Store")
+}
+type Mutation {
+    collectTotals(cart_id: String!): Boolean @resolver(class: "Tigren\\StoreGraphQl\\Model\\Resolver\\CollectTotals")
+}
+
 type StoreConfig @doc(description: "The type contains information about a store config") {
     display_product_stock_status : Boolean @doc(description: "Show or hide stock status product in product page")
     default_country : String @doc(description: "Default country")
@@ -25,4 +32,21 @@ type StoreConfig @doc(description: "The type contains information about a store 
     street_lines : Int @doc(description: "Number of street line")
     show_telephone : String @doc(description: "Show Telephone")
     show_company : String @doc(description: "Show company")
+    currency_allow: String @doc(description: "Currencies allowed with specific store")
+    welcome: String @doc(description: "Default welcome message")
+}
+type Currency {
+    available_currency_codes: [CurrencyCode] @resolver(class: "Tigren\\StoreGraphQl\\Model\\Resolver\\Currency")
+}
+type CurrencyCode {
+    code: String
+    name: String
+}
+type Store {
+    default: String
+    available_stores : [StoreView]
+}
+type StoreView {
+    code: String
+    name: String
 }

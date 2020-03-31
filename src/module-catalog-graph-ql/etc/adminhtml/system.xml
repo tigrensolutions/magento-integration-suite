@@ -1,19 +1,26 @@
 <?xml version="1.0"?>
 <!--
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+  ~ @author    Tigren Solutions <info@tigren.com>
+  ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+  ~ @license   Open Software License ("OSL") v. 3.0
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <section id="pwa_connector" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Catalog GraphQl</label>
             <tab>tigren</tab>
             <resource>Tigren_CatalogGraphQl::catalog_config</resource>
-            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
                 <label>General</label>
-                <field id="feature_product" type="textarea" translate="label" sortOrder="0" showInDefault="1" showInWebsite="1"
+                <field id="full_url" type="select" translate="label" sortOrder="5" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Show Image Product Full Path</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="feature_product" type="textarea" translate="label" sortOrder="0" showInDefault="1"
+                       showInWebsite="1"
                        showInStore="1">
                     <label>Feature Products Condition</label>
                 </field>
@@ -22,12 +29,14 @@
                     <label>Show New Products</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="show_feature" type="select" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1"
+                <field id="show_feature" type="select" translate="label" sortOrder="10" showInDefault="1"
+                       showInWebsite="1"
                        showInStore="1">
                     <label>Show Feature Products</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="show_bestseller" type="select" translate="label" sortOrder="15" showInDefault="1" showInWebsite="1"
+                <field id="show_bestseller" type="select" translate="label" sortOrder="15" showInDefault="1"
+                       showInWebsite="1"
                        showInStore="1">
                     <label>Show Best Seller Products</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

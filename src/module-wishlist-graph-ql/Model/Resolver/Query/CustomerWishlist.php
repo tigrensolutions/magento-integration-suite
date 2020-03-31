@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
@@ -12,6 +12,7 @@ use Magento\Catalog\Helper\Product\Configuration as ProductConfig;
 use Magento\Customer\Model\Customer;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
@@ -29,14 +30,17 @@ class CustomerWishlist implements ResolverInterface
      * Price type final.
      */
     const PRICE_CODE = 'final_price';
+
     /**
      * @var ProductConfig
      */
     protected $productConfig;
+
     /**
      * @var WishlistHelper
      */
     protected $wishlistHelper;
+
     /**
      * @var WishlistFactory
      */
@@ -67,18 +71,37 @@ class CustomerWishlist implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        if (!isset($value['id'])) {
-            throw new LocalizedException(__('"id" value should be specified'));
+        if (false === $context->getExtensionAttributes()->getIsCustomer()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
         }
-        /** @var Customer $customer */
-        $customerId = $value['id'];
-
+        if ($args['currentPage'] < 1) {
+            throw new GraphQlInputException(__('currentPage value must be greater than 0.'));
+        }
+        if ($args['pageSize'] < 1) {
+            throw new GraphQlInputException(__('pageSize value must be greater than 0.'));
+        }
+        $customerId = $context->getUserId();
         $wishlistData = [];
-        $wishlistCollection = $this->wishlistFactory->create()->loadByCustomerId($customerId)->getItemCollection();
-        foreach ($wishlistCollection as $item) {
+        $collection = $this->wishlistFactory->create()->loadByCustomerId($customerId)->getItemCollection();
+        $totalCount = $collection->getSize();
+
+        $pageSize = $args['pageSize'];
+        $curPage = $args['currentPage'];
+        $pageInfo = [
+            'page_size' => $pageSize,
+            'current_page' => $curPage,
+            'total_pages' => ceil($totalCount / $pageSize)
+        ];
+        $collection->setPageSize($pageSize)->setCurPage($curPage);
+        foreach ($collection as $item) {
             $wishlistData[] = $this->getItemData($item);
         }
-        return $wishlistData ?: null;
+        $data = [
+            'total_count' => $totalCount,
+            'items' => $wishlistData ?: null,
+            'page_info' => $pageInfo
+        ];
+        return $data;
     }
 
     /**

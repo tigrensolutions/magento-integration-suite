@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Tigren\Core\Helper;
 
@@ -39,11 +44,11 @@ use Magento\Store\Model\StoreManagerInterface;
  */
 class Data extends AbstractHelper
 {
-
     /**
      *
      */
     const XML_PATH_PWA_FEATUERE_PRODUCT_CONDITION = 'pwa_connector/general/feature_product';
+
     const DEFAULT_GROUP = 'design/head/';
 
     /**
@@ -52,86 +57,107 @@ class Data extends AbstractHelper
      * @var TokenCollectionFactory
      */
     protected $tokenModelCollectionFactory;
+
     /**
      * @var StoreManagerInterface
      */
     protected $_storeManager;
+
     /**
      * @var
      */
     protected $_baseUrl;
+
     /**
      * @var TokenModelFactory
      */
     protected $tokenModelFactory;
+
     /**
      * @var TokenModel
      */
     protected $tokenModel;
+
     /**
      * @var
      */
     protected $_customerSession;
+
     /**
      * @var Config
      */
     protected $_catalogConfig;
+
     /**
      * @var Emulation
      */
     protected $_appEmulation;
+
     /**
      * @var LayoutFactory
      */
     protected $layoutFactory;
+
     /**
      * @var \Magento\Customer\Model\Session
      */
     protected $customerSession;
+
     /**
      * @var \Magento\Directory\Block\Data
      */
     protected $blockDirectory;
+
     /**
      * @var \Magento\Directory\Helper\Data
      */
     protected $helperDirectory;
+
     /**
      * @var ImageFactory
      */
     protected $imageHelperFactory;
+
     /**
      * @var \Magento\Customer\Model\Session
      */
     protected $checkoutSession;
+
     /**
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
+
     /**
      *  * @var Attribute
      *  */
     protected $_eavAttribute;
+
     /**
      * @var TimezoneInterface
      */
     protected $_localeDate;
+
     /**
      * @var QuoteFactory
      */
     protected $_quoteFactory;
+
     /**
      * @var ResourceConnection
      */
     protected $_resource;
+
     /**
      * @var AdapterInterface
      */
     protected $_connection;
+
     /**
      * @var CustomerFactory
      */
     protected $_customerFactory;
+
     /**
      * @var CustomerRepositoryInterface
      */
@@ -327,6 +353,9 @@ class Data extends AbstractHelper
         return $this->getStore()->getWebsiteId();
     }
 
+    /**
+     * @return mixed
+     */
     public function getConditionFeature()
     {
         return $this->getConfig(self::XML_PATH_PWA_FEATUERE_PRODUCT_CONDITION);
@@ -348,17 +377,11 @@ class Data extends AbstractHelper
         return $this->scopeConfig->getValue($path, $scope, $store);
     }
 
-    public function getMetaConfig()
-    {
-        return [
-            'description' => $this->getConfig(self::DEFAULT_GROUP.'default_description'),
-            'keywords' => $this->getConfig(self::DEFAULT_GROUP.'default_keywords'),
-            'title' => $this->getConfig(self::DEFAULT_GROUP.'default_title'),
-            'prefix' => $this->getConfig(self::DEFAULT_GROUP.'title_prefix'),
-            'suffix' => $this->getConfig(self::DEFAULT_GROUP.'title_suffix'),
-        ];
-    }
-
+    /**
+     * @param array $result
+     * @param null $type
+     * @return array
+     */
     public function applyMetaConfig(array $result, $type = null)
     {
         $metaConfig = $this->getMetaConfig();
@@ -375,10 +398,10 @@ class Data extends AbstractHelper
             }
             if (!empty($result[PageInterface::META_TITLE])) {
                 if (trim($metaConfig['prefix'])) {
-                    $result[PageInterface::META_TITLE] = trim($metaConfig['prefix']). ' ' . $result[PageInterface::META_TITLE];
+                    $result[PageInterface::META_TITLE] = trim($metaConfig['prefix']) . ' ' . $result[PageInterface::META_TITLE];
                 }
                 if (trim($metaConfig['suffix'])) {
-                    $result[PageInterface::META_TITLE] = $result[PageInterface::META_TITLE]. ' ' .trim($metaConfig['suffix']) ;
+                    $result[PageInterface::META_TITLE] = $result[PageInterface::META_TITLE] . ' ' . trim($metaConfig['suffix']);
                 }
             }
         }
@@ -391,10 +414,10 @@ class Data extends AbstractHelper
             }
             if (!empty($result['name'])) {
                 if (trim($metaConfig['prefix'])) {
-                    $result[PageInterface::META_TITLE] = trim($metaConfig['prefix']). ' ' . $result['name'];
+                    $result[PageInterface::META_TITLE] = trim($metaConfig['prefix']) . ' ' . $result['name'];
                 }
                 if (trim($metaConfig['suffix'])) {
-                    $result[PageInterface::META_TITLE].= ' ' .trim($metaConfig['suffix']) ;
+                    $result[PageInterface::META_TITLE] .= ' ' . trim($metaConfig['suffix']);
                 }
             }
         }
@@ -402,8 +425,10 @@ class Data extends AbstractHelper
             if (empty($result[PageInterface::META_DESCRIPTION])) {
                 if (!empty($result['description'])) {
                     $result[PageInterface::META_DESCRIPTION] = $result['description'];
-                } else if (!empty($metaConfig['description'])) {
-                    $result[PageInterface::META_DESCRIPTION] = $metaConfig['description'];
+                } else {
+                    if (!empty($metaConfig['description'])) {
+                        $result[PageInterface::META_DESCRIPTION] = $metaConfig['description'];
+                    }
                 }
             }
             if (empty($result['meta_keyword']) && !empty($metaConfig['keywords'])) {
@@ -411,10 +436,10 @@ class Data extends AbstractHelper
             }
             if (!empty($result['name'])) {
                 if (trim($metaConfig['prefix'])) {
-                    $result[PageInterface::META_TITLE] = trim($metaConfig['prefix']). ' ' . $result['name'];
+                    $result[PageInterface::META_TITLE] = trim($metaConfig['prefix']) . ' ' . $result['name'];
                 }
                 if (trim($metaConfig['suffix'])) {
-                    $result[PageInterface::META_TITLE].= ' ' .trim($metaConfig['suffix']) ;
+                    $result[PageInterface::META_TITLE] .= ' ' . trim($metaConfig['suffix']);
                 }
             }
         }
@@ -422,4 +447,26 @@ class Data extends AbstractHelper
         return $result;
     }
 
+    /**
+     * @return array
+     */
+    public function getMetaConfig()
+    {
+        return [
+            'description' => $this->getConfig(self::DEFAULT_GROUP . 'default_description'),
+            'keywords' => $this->getConfig(self::DEFAULT_GROUP . 'default_keywords'),
+            'title' => $this->getConfig(self::DEFAULT_GROUP . 'default_title'),
+            'prefix' => $this->getConfig(self::DEFAULT_GROUP . 'title_prefix'),
+            'suffix' => $this->getConfig(self::DEFAULT_GROUP . 'title_suffix'),
+        ];
+    }
+
+    /**
+     * @return mixed
+     * @throws NoSuchEntityException
+     */
+    public function getRootCategoryId()
+    {
+        return $this->_storeManager->getStore()->getRootCategoryId();
+    }
 }

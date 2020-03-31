@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ @author Tigren Solutions <info@tigren.com>
+  ~ @author    Tigren Solutions <info@tigren.com>
   ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
-  ~ @license Open Software License ("OSL") v. 3.0
+  ~ @license   Open Software License ("OSL") v. 3.0
   -->
-<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
             <item name="provider" xsi:type="string">notification_form.notification_form_data_source</item>
@@ -20,7 +21,9 @@
             <item name="delete" xsi:type="string">Tigren\ProgressiveWebApp\Block\Adminhtml\Edit\DeleteButton</item>
             <item name="reset" xsi:type="string">Tigren\ProgressiveWebApp\Block\Adminhtml\Edit\ResetButton</item>
             <item name="save" xsi:type="string">Tigren\ProgressiveWebApp\Block\Adminhtml\Edit\SaveButton</item>
-            <item name="save_and_continue" xsi:type="string">Tigren\ProgressiveWebApp\Block\Adminhtml\Edit\SaveAndContinueButton</item>
+            <item name="save_and_continue" xsi:type="string">
+                Tigren\ProgressiveWebApp\Block\Adminhtml\Edit\SaveAndContinueButton
+            </item>
         </item>
         <item name="reverseMetadataMerge" xsi:type="boolean">true</item>
     </argument>

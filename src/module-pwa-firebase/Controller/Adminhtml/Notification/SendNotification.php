@@ -1,34 +1,80 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\ProgressiveWebApp\Controller\Adminhtml\Notification;
 
+use Exception;
 use Magento\Backend\App\Action;
-use sngrl\PhpFirebaseCloudMessaging\Client;
-use sngrl\PhpFirebaseCloudMessaging\Message;
-use sngrl\PhpFirebaseCloudMessaging\Notification;
-use sngrl\PhpFirebaseCloudMessaging\Recipient\Topic;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use RuntimeException;
+use Tigren\ProgressiveWebApp\Helper\Data;
+use Tigren\ProgressiveWebApp\Model\NotificationFactory;
+use Tigren\ProgressiveWebApp\PhpFirebaseCloudMessaging\Client;
+use Tigren\ProgressiveWebApp\PhpFirebaseCloudMessaging\Message;
+use Tigren\ProgressiveWebApp\PhpFirebaseCloudMessaging\Notification;
+use Tigren\ProgressiveWebApp\PhpFirebaseCloudMessaging\Recipient\Topic;
 
-class SendNotification extends \Magento\Backend\App\Action
+/**
+ * Class SendNotification
+ * @package Tigren\ProgressiveWebApp\Controller\Adminhtml\Notification
+ */
+class SendNotification extends Action
 {
+    /**
+     * @var ScopeConfigInterface
+     */
     protected $scope;
+
+    /**
+     * @var Client
+     */
     protected $_client;
+
+    /**
+     * @var Message
+     */
     protected $_message;
+
+    /**
+     * @var
+     */
     protected $_notification;
+
+    /**
+     * @var Data
+     */
     protected $_pwaHelper;
+
+    /**
+     * @var NotificationFactory
+     */
     protected $_notificationFactory;
 
+    /**
+     * SendNotification constructor.
+     * @param Action\Context $context
+     * @param ScopeConfigInterface $scope
+     * @param Client $client
+     * @param Message $message
+     * @param Data $helper
+     * @param NotificationFactory $notificationFactory
+     */
     public function __construct(
         Action\Context $context,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scope,
+        ScopeConfigInterface $scope,
         Client $client,
         Message $message,
-        \Tigren\ProgressiveWebApp\Helper\Data $helper,
-        \Tigren\ProgressiveWebApp\Model\NotificationFactory $notificationFactory
+        Data $helper,
+        NotificationFactory $notificationFactory
     ) {
         $this->scope = $scope;
         $this->_client = $client;
@@ -38,6 +84,10 @@ class SendNotification extends \Magento\Backend\App\Action
         return parent::__construct($context);
     }
 
+    /**
+     * @return ResponseInterface|Redirect|ResultInterface
+     * @throws NoSuchEntityException
+     */
     public function execute()
     {
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -64,15 +114,15 @@ class SendNotification extends \Magento\Backend\App\Action
                     $this->messageManager->addError(__('Send notification failed. Please try again.'));
                     return $resultRedirect->setPath('*/*/');
                 }
-            } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            } catch (LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
-            } catch (\RuntimeException $e) {
+            } catch (RuntimeException $e) {
                 $this->messageManager->addError($e->getMessage());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->messageManager->addException($e, __('Something went wrong while sending notification.'));
             }
         } else {
-            $this->messageManager->addError( __('Cannot send the notification. The notification does not exists.'));
+            $this->messageManager->addError(__('Cannot send the notification. The notification does not exists.'));
         }
         return $resultRedirect->setPath('*/*/');
     }

@@ -1,7 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver;
@@ -54,13 +55,13 @@ class Products
         if (!empty($result['items'])) {
             $apply = false;
             foreach ($result['items'] as $key => $item) {
-                if ($apply)
+                if ($apply) {
                     continue;
-                $result['items'][$key] = $this->helper->applyMetaConfig($result['items'][$key],'prod');
+                }
+                $result['items'][$key] = $this->helper->applyMetaConfig($result['items'][$key], 'prod');
                 $apply = true;
             }
         }
         return $result;
     }
-
 }

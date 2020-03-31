@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
@@ -25,6 +25,7 @@ use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\Item\OptionFactory;
 use Magento\Wishlist\Model\ItemFactory;
 use Magento\Wishlist\Model\WishlistFactory;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 
 /**
  * Class RemoveItem
@@ -51,27 +52,44 @@ class RemoveItem implements ResolverInterface
      * @var ItemFactory
      */
     protected $itemFactory;
+
     /**
      * @var Cart
      */
     protected $cart;
+
     /**
      * @var Product
      */
     protected $productHelper;
+
     /**
      * @var Configuration
      */
     protected $productConfig;
+
     /**
      * @var GetCustomer
      */
     protected $getCustomer;
+
     /**
      * @var OptionFactory
      */
     private $optionFactory;
 
+    /**
+     * RemoveItem constructor.
+     * @param ProductRepositoryInterface $productRepository
+     * @param WishlistFactory $wishlistFactory
+     * @param EventManager $eventManager
+     * @param ItemFactory $itemFactory
+     * @param Cart $cart
+     * @param OptionFactory $optionFactory
+     * @param Product $productHelper
+     * @param Configuration $productConfig
+     * @param GetCustomer $getCustomer
+     */
     public function __construct(
         ProductRepositoryInterface $productRepository,
         WishlistFactory $wishlistFactory,
@@ -136,5 +154,4 @@ class RemoveItem implements ResolverInterface
 
         return true;
     }
-
 }

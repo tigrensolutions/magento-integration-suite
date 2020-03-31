@@ -1,34 +1,34 @@
 {
-    "name": "tigrensolutions/module-paypal-express",
-    "type": "magento2-module",
-    "license": "OSL-3.0",
-    "authors": [
-        {
-            "name": "Tigren Solutions",
-            "email": "info@tigren.com"
-        }
-    ],
-    "description": "Magento 2 Paypal Express",
-    "homepage": "https://www.tigren.com",
-    "keywords": [
-        "magento",
-        "magento2",
-        "integration",
-        "api",
-        "rest",
-        "soap",
-        "graphql"
-    ],
-    "require": {
-        "magento/framework": ">=101.0.0"
-    },
-    "version": "1.0.0",
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Tigren\\PaypalExpress\\": ""
-        }
+  "name": "tigrensolutions/module-paypal-express",
+  "type": "magento2-module",
+  "license": "OSL-3.0",
+  "authors": [
+    {
+      "name": "Tigren Solutions",
+      "email": "info@tigren.com"
     }
+  ],
+  "description": "Magento 2 Paypal Express",
+  "homepage": "https://www.tigren.com",
+  "keywords": [
+    "magento",
+    "magento2",
+    "integration",
+    "api",
+    "rest",
+    "soap",
+    "graphql"
+  ],
+  "require": {
+    "magento/framework": ">=101.0.0"
+  },
+  "version": "1.0.0",
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Tigren\\PaypalExpress\\": ""
+    }
+  }
 }

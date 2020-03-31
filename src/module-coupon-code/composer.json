@@ -1,28 +1,28 @@
 {
   "name": "tigren/module-coupon-code",
-    "type": "magento2-module",
-    "license": "OSL-3.0",
-    "authors": [
-        {
-            "name": "Tigren Solutions",
-            "email": "info@tigren.com"
-        }
-    ],
-    "description": "Magento 2 Coupon Code",
-    "homepage": "https://www.tigren.com",
-    "keywords": [
-        "magento",
-        "magento2",
-        "integration",
-        "api",
-        "rest",
-        "soap",
-        "graphql"
-    ],
-    "require": {
-        "magento/framework": ">=101.0.0"
-    },
-    "version": "1.0.0",
+  "type": "magento2-module",
+  "license": "OSL-3.0",
+  "authors": [
+    {
+      "name": "Tigren Solutions",
+      "email": "info@tigren.com"
+    }
+  ],
+  "description": "Magento 2 Coupon Code",
+  "homepage": "https://www.tigren.com",
+  "keywords": [
+    "magento",
+    "magento2",
+    "integration",
+    "api",
+    "rest",
+    "soap",
+    "graphql"
+  ],
+  "require": {
+    "magento/framework": ">=101.0.0"
+  },
+  "version": "1.0.0",
   "autoload": {
     "psr-4": {
       "Tigren\\CouponCode\\": ""

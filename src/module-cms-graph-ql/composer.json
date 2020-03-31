@@ -3,12 +3,12 @@
   "description": "",
   "type": "magento2-module",
   "license": "proprietary",
-    "authors": [
-        {
-            "name": "Tigren Solutions",
-            "email": "info@tigren.com"
-        }
-    ],
+  "authors": [
+    {
+      "name": "Tigren Solutions",
+      "email": "info@tigren.com"
+    }
+  ],
   "minimum-stability": "dev",
   "require": {},
   "autoload": {

@@ -1,20 +1,36 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\ProgressiveWebApp\Controller\Adminhtml\Notification;
 
-class NewAction extends \Magento\Backend\App\Action
-{
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\Forward;
+use Magento\Backend\Model\View\Result\ForwardFactory;
 
+/**
+ * Class NewAction
+ * @package Tigren\ProgressiveWebApp\Controller\Adminhtml\Notification
+ */
+class NewAction extends Action
+{
+    /**
+     * @var ForwardFactory
+     */
     protected $resultForwardFactory;
 
+    /**
+     * NewAction constructor.
+     * @param Context $context
+     * @param ForwardFactory $resultForwardFactory
+     */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
+        Context $context,
+        ForwardFactory $resultForwardFactory
     ) {
         $this->resultForwardFactory = $resultForwardFactory;
         parent::__construct($context);
@@ -23,11 +39,11 @@ class NewAction extends \Magento\Backend\App\Action
     /**
      * Forward to edit
      *
-     * @return \Magento\Backend\Model\View\Result\Forward
+     * @return Forward
      */
     public function execute()
     {
-        /** @var \Magento\Backend\Model\View\Result\Forward $resultForward */
+        /** @var Forward $resultForward */
         $resultForward = $this->resultForwardFactory->create();
         return $resultForward->forward('edit');
     }
@@ -39,5 +55,4 @@ class NewAction extends \Magento\Backend\App\Action
     {
         return $this->_authorization->isAllowed('Tigren_ProgressiveWebApp::notification');
     }
-
 }

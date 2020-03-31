@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 declare(strict_types=1);
 
@@ -11,6 +16,10 @@ use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
 use Magento\Contact\Model\MailInterface;
 use Magento\Framework\DataObject;
 
+/**
+ * Class SubmitContactUs
+ * @package Tigren\CatalogGraphQl\Model\Graphql\Resolver
+ */
 class SubmitContactUs implements ResolverInterface
 {
     /**
@@ -63,5 +72,4 @@ class SubmitContactUs implements ResolverInterface
             ['data' => new DataObject($post)]
         );
     }
-
 }

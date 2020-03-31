@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
-  ~ @author Tigren Solutions <info@tigren.com>
+  ~ @author    Tigren Solutions <info@tigren.com>
   ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
-  ~ @license Open Software License ("OSL") v. 3.0
+  ~ @license   Open Software License ("OSL") v. 3.0
   -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
@@ -24,6 +24,16 @@
                    showInWebsite="1" showInStore="1">
                 <label>Installed Tigren Extensions</label>
                 <frontend_model>Tigren\Core\Block\System\Config\Extensions</frontend_model>
+            </group>
+        </section>
+        <section id="web" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1"
+                 showInStore="1">
+            <group id="unsecure" translate="label comment" type="text" sortOrder="10" showInDefault="1"
+                   showInWebsite="1" showInStore="1">
+                <field id="base_app_url" translate="label comment" type="text" sortOrder="10" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Base App URL</label>
+                </field>
             </group>
         </section>
     </system>

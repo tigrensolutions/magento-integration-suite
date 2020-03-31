@@ -1,14 +1,24 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\CouponCode\Model;
 
+use Exception;
+use Magento\Checkout\Helper\Cart;
+use Magento\Framework\Escaper;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Model\Quote;
+use Magento\SalesRule\Model\CouponFactory;
 use Tigren\CouponCode\Api\CouponApplyInterface;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Tigren\CouponCode\Api\Data\CouponCodeInterface;
 
 /**
  * Interface ReviewManagement
@@ -16,44 +26,43 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
  */
 class CouponApply implements CouponApplyInterface
 {
-
     /**
      * Quote repository.
      *
-     * @var \Magento\Quote\Api\CartRepositoryInterface
+     * @var CartRepositoryInterface
      */
     protected $quoteRepository;
 
     /**
-     * @var \Magento\Framework\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $_objectManager;
 
     /**
      * Coupon factory
      *
-     * @var \Magento\SalesRule\Model\CouponFactory
+     * @var CouponFactory
      */
     protected $couponFactory;
 
     /**
-     * @var \Magento\Framework\Message\ManagerInterface
+     * @var ManagerInterface
      */
     protected $messageManager;
 
 
     /**
      * CouponApply constructor.
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Magento\SalesRule\Model\CouponFactory $couponFactory
-     * @param \Magento\Framework\Message\ManagerInterface $messagemanager
-     * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+     * @param ObjectManagerInterface $objectManager
+     * @param CouponFactory $couponFactory
+     * @param ManagerInterface $messagemanager
+     * @param CartRepositoryInterface $quoteRepository
      */
     public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\SalesRule\Model\CouponFactory $couponFactory,
-        \Magento\Framework\Message\ManagerInterface $messagemanager,
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+        ObjectManagerInterface $objectManager,
+        CouponFactory $couponFactory,
+        ManagerInterface $messagemanager,
+        CartRepositoryInterface $quoteRepository
     ) {
         $this->quoteRepository = $quoteRepository;
         $this->couponFactory = $couponFactory;
@@ -64,7 +73,7 @@ class CouponApply implements CouponApplyInterface
     /**
      * {@inheritdoc}
      */
-    public function submit(\Tigren\CouponCode\Api\Data\CouponCodeInterface $couponCodeDta)
+    public function submit(CouponCodeInterface $couponCodeDta)
     {
         $result = [
             'sucess' => 1,
@@ -75,7 +84,7 @@ class CouponApply implements CouponApplyInterface
             ? ''
             : trim($couponCodeDta->getCouponCode());
         $quoteId = $this->getQuoteId($couponCodeDta->getCartId());
-        /** @var \Magento\Quote\Model\Quote $quote */
+        /** @var Quote $quote */
         $quote = $this->quoteRepository->getActive($quoteId);
         $oldCouponCode = $quote->getCouponCode();
 
@@ -88,7 +97,7 @@ class CouponApply implements CouponApplyInterface
         }
 
         try {
-            $isCodeLengthValid = $codeLength && $codeLength <= \Magento\Checkout\Helper\Cart::COUPON_CODE_MAX_LENGTH;
+            $isCodeLengthValid = $codeLength && $codeLength <= Cart::COUPON_CODE_MAX_LENGTH;
 
             $itemsCount = $quote->getItemsCount();
             if ($itemsCount) {
@@ -98,7 +107,7 @@ class CouponApply implements CouponApplyInterface
             }
 
             if ($codeLength) {
-                $escaper = $this->_objectManager->get(\Magento\Framework\Escaper::class);
+                $escaper = $this->_objectManager->get(Escaper::class);
                 $coupon = $this->couponFactory->create();
                 $coupon->load($couponCode, 'code');
                 if (!$itemsCount) {
@@ -106,7 +115,7 @@ class CouponApply implements CouponApplyInterface
                         $quote->setCouponCode($couponCode)->save();
                         $result = [
                             'success' => 1,
-                            'message' => __('You used coupon code '). $couponCode
+                            'message' => __('You used coupon code ') . $couponCode
                         ];
                     } else {
                         $result = [
@@ -121,7 +130,7 @@ class CouponApply implements CouponApplyInterface
                     if ($isCodeLengthValid && $coupon->getId() && $couponCode == $quote->getCouponCode()) {
                         $result = [
                             'success' => 1,
-                            'message' => __('You used coupon code '). $couponCode
+                            'message' => __('You used coupon code ') . $couponCode
                         ];
                     } else {
                         $result = [
@@ -139,8 +148,8 @@ class CouponApply implements CouponApplyInterface
                     'message' => __('You canceled the coupon code.')
                 ];
             }
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
-        } catch (\Exception $e) {
+        } catch (LocalizedException $e) {
+        } catch (Exception $e) {
             $result = [
                 'success' => 0,
                 'message' => __('We cannot apply the coupon code.')
@@ -150,8 +159,12 @@ class CouponApply implements CouponApplyInterface
         return json_encode($result);
     }
 
-    public function getQuoteId($cartId){
+    /**
+     * @param $cartId
+     * @return mixed
+     */
+    public function getQuoteId($cartId)
+    {
         return $cartId;
     }
-
 }

@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 declare(strict_types=1);
@@ -19,6 +19,10 @@ use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 
+/**
+ * Class CreateNewPassword
+ * @package Tigren\CustomerGraphQl\Model\Resolver\Customer
+ */
 class CreateNewPassword implements ResolverInterface
 {
     /**
@@ -35,7 +39,6 @@ class CreateNewPassword implements ResolverInterface
     ) {
         $this->accountManagement = $accountManagement;
     }
-
 
     /**
      * @param Field $field
@@ -68,5 +71,4 @@ class CreateNewPassword implements ResolverInterface
         } catch (LocalizedException $e) {
         }
     }
-
 }

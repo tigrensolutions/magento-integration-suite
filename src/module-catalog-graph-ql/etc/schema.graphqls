@@ -1,10 +1,36 @@
 type Query {
+    category (
+        id: Int @doc(description: "Id of the category.")
+    ): CategoryData
+    @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Resolver\\Category") @doc(description: "The category query searches for categories that match the criteria specified in the search and filter attributes.") @cache(cacheIdentity: "Tigren\\CatalogGraphQl\\Model\\Resolver\\Category\\CategoryIdentity")
     products_list : ProductList @doc(description: "List new and feature product on homepage")
     @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\ProductList")
     product (
         id: Int! @doc(description: "The ID of product"),
     ): Product @doc(description: "The Product object")
     @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product")
+    popularSearchTerms : PopularSearchTerms @doc(description: "An arry of popular search terms")
+    @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Resolver\\Search\\PopularSearchTerms")
+    searchAttributes : SearchAttributes @doc(description: "List of search attributes")
+    @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Resolver\\Search\\Attributes")
+    advancedSearch (
+        query : String
+    ): AdvancedSearch @doc(description: "Catalog Advanced Search Result")
+    @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Resolver\\Search\\Result")
+}
+
+type CategoryData implements CategoryExtendedInterface @doc(description: "Category data implementation.") {}
+
+type Mutation {
+    contactUs(
+        name: String!
+        email: String!
+        telephone: String
+        comment: String!
+    ): Boolean @resolver(class: "\\Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\SubmitContactUs") @doc(description:"submit to contact website")
+    saveTermsLog (
+        query: String
+    ): Boolean @resolver(class: "\\Tigren\\CatalogGraphQl\\Model\\Resolver\\Mutation\\SaveTermsLog") @doc(description: "Save term log query")
 }
 
 type Product {
@@ -15,15 +41,6 @@ type ProductList {
     new_items: [ProductInterface] @doc(description: "An array of products set as new")
     featured_items: [ProductInterface] @doc(description: "An array of products set as featured")
     bestseller_items: [ProductInterface] @doc(description: "An array of products set as bestseller")
-}
-
-type Mutation {
-    contactUs(
-        name: String!
-        email: String!
-        telephone: String
-        comment: String!
-    ): Boolean @resolver(class: "\\Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\SubmitContactUs") @doc(description:"submit to contact website")
 }
 
 type Attribute @doc(description: "define data of an attribute") {
@@ -37,18 +54,42 @@ interface ProductInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\
     final_price: Float @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\FinalPrice")
     attributes: [Attribute] @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\Attributes")
     related: [ProductInterface] @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\Related")
+    has_options: Boolean @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\HasOptions")
+    price (currency: String) : ProductPrices @doc(description: "A ProductPrices object, indicating the price of an item.") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Product\\Price")
+    special_price: Float @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\SpecialPrice")
 }
 
-interface CategoryInterface {
-    products(
-        filterList: [LayerFilterInput]
-    ): CategoryProducts
-    filters(
-        filter: [LayerFilterInput]
-    ): CategoryFilters @doc(description: "The list of filters of the category") @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Category\\Filters")
+interface CategoryExtendedInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\\CategoryInterfaceTypeResolver") @doc(description: "CategoryInterface contains the full set of attributes that can be returned in a category search.") {
+    id: Int @doc(description: "An ID that uniquely identifies the category.")
+    description: String @doc(description: "An optional description of the category.") @resolver(class: "\\Magento\\CatalogGraphQl\\Model\\Resolver\\Category\\CategoryHtmlAttribute")
+    name: String @doc(description: "The display name of the category.")
+    path: String @doc(description: "Category Path.")
+    path_in_store: String @doc(description: "Category path in store.")
+    url_key: String @doc(description: "The url key assigned to the category.")
+    url_path: String @doc(description: "The url path assigned to the category.")
+    position: Int @doc(description: "The position of the category relative to other categories at the same level in tree.")
+    level: Int @doc(description: "Indicates the depth of the category within the tree.")
+    created_at: String @doc(description: "Timestamp indicating when the category was created.")
+    updated_at: String @doc(description: "Timestamp indicating when the category was updated.")
+    product_count: Int @doc(description: "The number of products in the category.") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Category\\ProductsCount")
+    default_sort_by: String @doc(description: "The attribute to use for sorting.")
     include_in_menu: Boolean
     image: String @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Category\\Image")
     display_mode: String @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Category\\DisplayMode")
+    breadcrumbs: [Breadcrumb] @doc(description: "Breadcrumbs, parent categories info.") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Category\\Breadcrumbs")
+    meta_title: String
+    meta_keywords: String
+    meta_description: String
+    products(
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+        sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
+        filter: [LayerFilterInput]
+    ): CategoryProducts @doc(description: "The list of products assigned to the category.") @cache(cacheIdentity: "Magento\\CatalogGraphQl\\Model\\Resolver\\Product\\Identity")
+    @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Resolver\\Category\\Products")
+    filters(
+        filter: [LayerFilterInput]
+    ): CategoryFilters @doc(description: "The list of filters of the category") @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Category\\Filters") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Category\\Products")
 }
 
 input LayerFilterInput {
@@ -63,6 +104,7 @@ type CategoryFilters @doc(description: "The category filters") {
 type CategoryFilter @doc(description: "The category filters") {
     name : String! @doc(description: "Name of the filter")
     code : String! @doc(description: "The code of the filter")
+    is_multiselect: Boolean @doc(description: "Check attribute is multi select or not")
     items: [FilterOption] @doc(description: "The list options of the filter")
 }
 
@@ -77,3 +119,45 @@ input ProductSortInput {
     position: SortEnum
 }
 
+interface CustomizableOptionInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\\CustomizableOptionTypeResolver") @doc(description: "The CustomizableOptionInterface contains basic information about a customizable option. It can be implemented by several types of configurable options.") {
+    typeId: String @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Graphql\\Resolver\\Product\\Option\\Type")
+}
+
+type PopularSearchTerms {
+    items : [SearchTermData] @doc(description: "Search Term Data")
+}
+
+type SearchTermData {
+    query_id : String
+    query_text : String
+    ratio : Float
+}
+
+type SearchAttributes {
+    items : [Attribute] @doc(description: "Search Term Data")
+}
+
+type Attribute {
+    label : String @doc(description: "Label of attribute")
+    input_type : String @doc(description: "Label of attribute")
+}
+
+interface CustomizableProductInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\\ProductInterfaceTypeResolverComposite") @doc(description: "CustomizableProductInterface contains information about customizable product options.") {
+    options: [CustomizableOptionInterface] @doc(description: "An array of options for a customizable product.") @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Resolver\\Product\\Options")
+}
+
+type AdvancedSearch {
+    products(
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+        sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
+        query: String
+    ): Products @doc(description: "The list of search products ")
+    @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Resolver\\Search\\Result\\Products")
+    criterias : [Criteria] @resolver(class: "Tigren\\CatalogGraphQl\\Model\\Resolver\\Search\\Result\\Criterias")
+}
+
+type Criteria {
+    name : String
+    value : String
+}

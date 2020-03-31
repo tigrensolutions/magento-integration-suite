@@ -1,29 +1,45 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\ProgressiveWebApp\Controller\Adminhtml\Notification;
 
-class Edit extends \Magento\Backend\App\Action
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Catalog\Controller\Adminhtml\Product\Builder;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Registry;
+use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Result\PageFactory;
+
+/**
+ * Class Edit
+ * @package Tigren\ProgressiveWebApp\Controller\Adminhtml\Notification
+ */
+class Edit extends Action
 {
     /**
-     * @var \Magento\Framework\View\Result\PageFactory
+     * @var PageFactory
      */
     protected $resultPageFactory;
+
+    /**
+     * @var Registry
+     */
     protected $_coreRegistry;
 
     /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Catalog\Controller\Adminhtml\Product\Builder $productBuilder
-     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
+     * @param Context $context
+     * @param Builder $productBuilder
+     * @param PageFactory $resultPageFactory
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
-        \Magento\Framework\Registry $registry
+        Context $context,
+        PageFactory $resultPageFactory,
+        Registry $registry
     ) {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
@@ -33,7 +49,7 @@ class Edit extends \Magento\Backend\App\Action
     /**
      * Product edit form
      *
-     * @return \Magento\Framework\Controller\ResultInterface
+     * @return ResultInterface
      */
     public function execute()
     {
@@ -50,7 +66,8 @@ class Edit extends \Magento\Backend\App\Action
         }
         $resultPage = $this->_initAction();
         $resultPage->addBreadcrumb(
-            $id ? __('Edit Notification') : __('New Notification'), $id ? __('Edit Notification') : __('New Notification')
+            $id ? __('Edit Notification') : __('New Notification'),
+            $id ? __('Edit Notification') : __('New Notification')
         );
         $resultPage->getConfig()->getTitle()->prepend(__('Notifications'));
         $resultPage->getConfig()->getTitle()
@@ -58,6 +75,9 @@ class Edit extends \Magento\Backend\App\Action
         return $resultPage;
     }
 
+    /**
+     * @return Page
+     */
     protected function _initAction()
     {
         $resultPage = $this->resultPageFactory->create();

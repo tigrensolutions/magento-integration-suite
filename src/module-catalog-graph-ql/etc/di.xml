@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product" type="Tigren\CatalogGraphQl\Override\CatalogGraphQl\Product" />
-    <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\Query\Filter" type="Tigren\CatalogGraphQl\Override\CatalogGraphQl\Filter" />
+<!--
+  ~ @author    Tigren Solutions <info@tigren.com>
+  ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+  ~ @license   Open Software License ("OSL") v. 3.0
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Tigren\CatalogGraphQl\Api\GuestCartRepositoryInterface"
-                type="Tigren\CatalogGraphQl\Model\GuestCartRepository" />
+                type="Tigren\CatalogGraphQl\Model\GuestCartRepository"/>
     <preference for="Tigren\CatalogGraphQl\Api\CartRepositoryInterface"
-                type="Tigren\CatalogGraphQl\Model\CartRepository" />
-    <type name="Magento\CatalogGraphQl\Model\Resolver\Category\Products">
-        <plugin name="pwa_category_products" type="Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver\Category\Products" />
-    </type>
-    <type name="Magento\CatalogGraphQl\Model\Resolver\CategoryTree">
-        <plugin name="pwa_category_tree" type="Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver\CategoryTree" sortOrder="1" />
-    </type>
-    <type name="Magento\CatalogGraphQl\Model\Resolver\Products">
-        <plugin name="pwa_products" type="Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver\Products" />
-    </type>
+                type="Tigren\CatalogGraphQl\Model\CartRepository"/>
+    <preference for="Magento\Catalog\Model\CustomOptions\CustomOptionProcessor"
+                type="Tigren\CatalogGraphQl\Override\Magento\Catalog\Model\CustomOptions\CustomOptionProcessor"/>
+    <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product"
+                type="Tigren\CatalogGraphQl\Override\Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product"/>
 </config>

@@ -1,7 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
@@ -13,10 +14,12 @@ use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogWidget\Model\Rule;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Rule\Model\Condition\Combine;
 use Magento\Rule\Model\Condition\Sql\Builder;
 use Magento\Widget\Helper\Conditions;
 use Tigren\CatalogGraphQl\Model\ResourceModel\Product\Bestsellers\Collection as BestsellerCollection;
@@ -29,41 +32,59 @@ use Zend_Db_Expr;
  */
 class ProductList implements ResolverInterface
 {
-
     /**
      * @var Data
      */
     protected $_helper;
+
     /**
      * @var TimezoneInterface
      */
     protected $_localeDate;
+
     /**
      * @var Visibility
      */
     protected $_visibility;
+
     /**
      * @var CatalogConfig
      */
     protected $_catalogConfig;
+
+    /**
+     * @var
+     */
     protected $_config;
+
     /**
      * @var Rule
      */
     protected $rule;
+
     /**
      * @var Builder
      */
     protected $sqlBuilder;
+
     /**
      * @var Conditions
      */
     protected $conditionsHelper;
 
+    /**
+     * @var CollectionFactory
+     */
     private $_collectionFactory;
 
+    /**
+     * @var BestsellerCollection
+     */
     private $bestsellerCollection;
 
+    /**
+     * @var Config
+     */
     private $config;
 
     /**
@@ -158,7 +179,7 @@ class ProductList implements ResolverInterface
             'news_from_date',
             'desc'
         )->setPageSize(
-            5
+            12
         )->setCurPage(
             1
         );
@@ -192,7 +213,8 @@ class ProductList implements ResolverInterface
 
     /**
      *
-     * @return Collection
+     * @return array
+     * @throws LocalizedException
      */
     public function getFeatureProducts()
     {
@@ -227,6 +249,9 @@ class ProductList implements ResolverInterface
         return $productArray;
     }
 
+    /**
+     * @return Combine|null
+     */
     private function getConditions()
     {
         $conditions = $this->_helper->getConditionFeature();

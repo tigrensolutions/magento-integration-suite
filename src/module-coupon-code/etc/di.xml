@@ -1,20 +1,17 @@
 <?xml version="1.0"?>
 <!--
-  ~ /**
-  ~  * *
-  ~  *  * @author Tigren Solutions <info@tigren.com>
-  ~  *  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
-  ~  *  * @license Open Software License ("OSL") v. 3.0
-  ~  *
-  ~  */
+  ~ @author    Tigren Solutions <info@tigren.com>
+  ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+  ~ @license   Open Software License ("OSL") v. 3.0
   -->
 
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Tigren\CouponCode\Api\CouponApplyInterface"
-                type="Tigren\CouponCode\Model\CouponApply" />
+                type="Tigren\CouponCode\Model\CouponApply"/>
     <preference for="Tigren\CouponCode\Api\GuestCouponApplyInterface"
-                type="Tigren\CouponCode\Model\GuestCouponApply" />
+                type="Tigren\CouponCode\Model\GuestCouponApply"/>
     <preference for="Tigren\CouponCode\Api\Data\CouponCodeInterface"
-                type="Tigren\CouponCode\Model\Data\CouponCode" />
+                type="Tigren\CouponCode\Model\Data\CouponCode"/>
 </config>
 

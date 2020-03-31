@@ -1,10 +1,16 @@
 <?php
+/**
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Tigren\CmsGraphQl\Plugin\Model\Resolver\DataProvider;
 
 use Closure;
 use Magento\Cms\Api\Data\PageInterface;
 use Magento\Cms\Api\PageRepositoryInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Widget\Model\Template\FilterEmulate;
 use Tigren\Core\Helper\Data;
@@ -51,6 +57,8 @@ class Page
      * @param Closure $proceed
      * @param $pageId
      * @return array
+     * @throws NoSuchEntityException
+     * @throws LocalizedException
      */
     public function aroundGetDataByPageId(
         \Magento\CmsGraphQl\Model\Resolver\DataProvider\Page $subject,

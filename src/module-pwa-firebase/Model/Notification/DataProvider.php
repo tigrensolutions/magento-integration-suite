@@ -1,17 +1,21 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\ProgressiveWebApp\Model\Notification;
 
+use Magento\Ui\DataProvider\AbstractDataProvider;
 use Tigren\ProgressiveWebApp\Model\ResourceModel\Notification\CollectionFactory;
 
-class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
+/**
+ * Class DataProvider
+ * @package Tigren\ProgressiveWebApp\Model\Notification
+ */
+class DataProvider extends AbstractDataProvider
 {
-
     /**
      * @var array
      */
@@ -37,6 +41,9 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
+    /**
+     * @return array
+     */
     public function getData()
     {
         if (isset($this->loadedData)) {

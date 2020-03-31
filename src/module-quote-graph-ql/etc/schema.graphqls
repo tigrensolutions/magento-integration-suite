@@ -1,3 +1,11 @@
 type Mutation {
     clearCart(cartId: String!): Boolean @resolver(class: "\\Tigren\\QuoteGraphQl\\Model\\Resolver\\ClearCart") @doc(description:"Clear Cart")
 }
+
+type CartPrices {
+    shipping_including_tax: Money
+    shipping_excluding_tax: Money
+}
+type ConfigurableCartItem implements CartItemInterface {
+    configurable_options: [SelectedConfigurableOption!]! @resolver(class: "Tigren\\QuoteGraphQl\\Model\\Resolver\\ConfigurableCartItemOptions")
+}

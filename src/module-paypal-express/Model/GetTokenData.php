@@ -1,18 +1,27 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\PaypalExpress\Model;
 
+use Exception;
+use Magento\Customer\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\UrlInterface;
+use Magento\Paypal\Model\Express\Checkout;
+use Magento\Quote\Model\Quote;
+use Tigren\PaypalExpress\Api\Data\TokenDataInterface;
 use Tigren\PaypalExpress\Api\GetTokenDataInterface;
 use Psr\Log\LoggerInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\GuestCartRepositoryInterface;
 use Magento\Customer\Model\ResourceModel\CustomerRepository;
+use Magento\Authorization\Model\UserContextInterface;
+use Tigren\PaypalExpress\Helper\Data;
 
 /**
  * Interface ReviewManagement
@@ -22,63 +31,62 @@ class GetTokenData implements GetTokenDataInterface
 {
 
     /**
-     * @var \Magento\Paypal\Model\Express\Checkout
+     * @var Checkout
      */
     protected $_checkout;
 
     /**
-     * @var \Magento\Customer\Model\Session
+     * @var Session
      */
     protected $_customerSession;
-
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var Data
+     */
+    protected $_helper;
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+    /**
+     * @var UrlInterface
+     */
+    protected $_url;
+    /**
+     * @var UserContextInterface
+     */
+    protected $userContext;
+    /**
+     * @var LoggerInterface
      */
     private $logger;
-
     /**
      * @var CartRepositoryInterface
      */
     private $cartRepository;
-
     /**
      * @var GuestCartRepositoryInterface
      */
     private $guestCartRepository;
 
     /**
-     * @var \Tigren\PaypalExpress\Helper\Data
-     */
-    protected $_helper;
-
-    /**
-     * @var CustomerRepository
-     */
-    protected $customerRepository;
-
-    /**
-     * @var \Magento\Framework\UrlInterface
-     */
-    protected $_url;
-
-    /**
      * GetTokenData constructor.
      * @param CartRepositoryInterface $cartRepository
      * @param GuestCartRepositoryInterface $guestCartRepository
-     * @param \Magento\Customer\Model\Session $customerSession
-     * @param \Tigren\PaypalExpress\Helper\Data $helper
+     * @param Session $customerSession
+     * @param Data $helper
      * @param CustomerRepository $customerRepository
-     * @param \Magento\Framework\UrlInterface $url
+     * @param UrlInterface $url
      * @param LoggerInterface $logger
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
         GuestCartRepositoryInterface $guestCartRepository,
-        \Magento\Customer\Model\Session $customerSession,
-        \Tigren\PaypalExpress\Helper\Data $helper,
+        Session $customerSession,
+        Data $helper,
         CustomerRepository $customerRepository,
-        \Magento\Framework\UrlInterface $url,
-        LoggerInterface $logger
+        UrlInterface $url,
+        LoggerInterface $logger,
+        UserContextInterface $userContext
     ) {
         $this->_url = $url;
         $this->_helper = $helper;
@@ -87,23 +95,24 @@ class GetTokenData implements GetTokenDataInterface
         $this->_customerSession = $customerSession;
         $this->customerRepository = $customerRepository;
         $this->logger = $logger;
+        $this->userContext = $userContext;
     }
 
     /**
-     * @param \Tigren\PaypalExpress\Api\Data\TokenDataInterface $tokenData
+     * @param TokenDataInterface $tokenData
      * @return mixed|string
      */
-    public function getTokenData(\Tigren\PaypalExpress\Api\Data\TokenDataInterface $tokenData)
+    public function getTokenData(TokenDataInterface $tokenData)
     {
         $quoteId = $tokenData->getQuoteId();
-        $customerId = $tokenData->getCustomerId();
+        $customerId = $this->userContext->getUserId() ?: null;
         $responseContent = [
             'success' => true,
             'error_message' => '',
         ];
 
         try {
-            $token = $this->getToken($quoteId,$customerId);
+            $token = $this->getToken($quoteId, $customerId);
             if ($token === null) {
                 $token = false;
             }
@@ -114,7 +123,7 @@ class GetTokenData implements GetTokenDataInterface
 
             $responseContent['success'] = false;
             $responseContent['error_message'] = $exception->getMessage();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logger->critical($exception);
 
             $responseContent['success'] = false;
@@ -128,15 +137,14 @@ class GetTokenData implements GetTokenDataInterface
      * @param $customerId
      * @return null|string
      * @throws LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
-    private function getToken($quoteId,$customerId): ?string
+    private function getToken($quoteId, $customerId): ?string
     {
         $customerId = $customerId ?: $this->_customerSession->getId();
-        $hasButton = true;
-        /** @var \Magento\Quote\Model\Quote $quote */
+        $hasButton = false;
+        /** @var Quote $quote */
         $quote = $customerId ? $this->cartRepository->get($quoteId) : $this->guestCartRepository->get($quoteId);
-
 
         $this->_checkout = $this->_helper->_initCheckout($quote);
 

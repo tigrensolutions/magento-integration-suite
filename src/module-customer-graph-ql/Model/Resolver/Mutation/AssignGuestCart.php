@@ -1,8 +1,8 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
@@ -16,12 +16,10 @@ use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use Magento\Quote\Model\QuoteRepository\SaveHandler;
-
 
 /**
  * Class AssignGuestCart
@@ -33,18 +31,22 @@ class AssignGuestCart implements ResolverInterface
      * @var CartRepositoryInterface
      */
     protected $quoteRepository;
+
     /**
      * @var QuoteIdMaskFactory
      */
     protected $quoteIdMaskFactory;
+
     /**
      * @var QuoteFactory
      */
     protected $quoteFactory;
+
     /**
      * @var SaveHandler
      */
     protected $saveHandler;
+
     /**
      * @var GetCustomer
      */
@@ -82,7 +84,6 @@ class AssignGuestCart implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        /** @var ContextInterface $context */
         if (false === $context->getExtensionAttributes()->getIsCustomer()) {
             throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
         }
@@ -104,8 +105,6 @@ class AssignGuestCart implements ResolverInterface
         } else {
             return false;
         }
-
         return true;
     }
-
 }

@@ -28,3 +28,26 @@ type Rating @doc(description: "define data of review") {
     value: String @doc(description: "Value of Rating")
     vote: Float @doc(description: "Vote of Rating")
 }
+
+type Query {
+     reviews(
+        pageSize : Int = 10,
+        currentPage: Int = 1
+    ): CustomerReviewOutput @doc(description: "list custom product reviews")
+     @resolver(class: "Tigren\\ReviewGraphQl\\Model\\Resolver\\CustomerReviews")
+}
+type CustomerReviewOutput {
+    items: [CustomerReviewInterface] @doc(description: "An array of wishlist item of current customer.")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    total_count: Int @doc(description: "The number of products returned.")
+}
+
+type CustomerReviewInterface {
+    id: Int
+    created_at: String
+    product_id: String
+    product_name: String
+    rating: Float
+    detail: String
+    product_url: String
+}

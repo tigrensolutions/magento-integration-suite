@@ -1,24 +1,37 @@
 <?php
 /**
- * @author Tigren Solutions <info@tigren.com>
+ * @author    Tigren Solutions <info@tigren.com>
  * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
- * @license Open Software License ("OSL") v. 3.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Tigren\ProgressiveWebApp\Setup;
 
-class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
+use Magento\Framework\DB\Ddl\Table;
+use Magento\Framework\Setup\InstallSchemaInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
+use Zend_Db_Exception;
+
+/**
+ * Class InstallSchema
+ * @package Tigren\ProgressiveWebApp\Setup
+ */
+class InstallSchema implements InstallSchemaInterface
 {
     /**
      * install tables
      *
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     * @param \Magento\Framework\Setup\ModuleContextInterface $context
+     * @param SchemaSetupInterface $setup
+     * @param ModuleContextInterface $context
      * @return void
+     * @throws Zend_Db_Exception
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function install(\Magento\Framework\Setup\SchemaSetupInterface $setup, \Magento\Framework\Setup\ModuleContextInterface $context)
-    {
+    public function install(
+        SchemaSetupInterface $setup,
+        ModuleContextInterface $context
+    ) {
         $installer = $setup;
         $installer->startSetup();
         $table = $installer->getConnection()->newTable(
@@ -26,7 +39,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
         )
             ->addColumn(
                 'notification_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                Table::TYPE_INTEGER,
                 null,
                 [
                     'identity' => true,
@@ -38,42 +51,42 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
             )
             ->addColumn(
                 'title',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                Table::TYPE_TEXT,
                 255,
                 ['nullable => false'],
                 'Title'
             )
             ->addColumn(
                 'icon',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                Table::TYPE_TEXT,
                 null,
                 ['nullable => false'],
                 'Icon'
             )
             ->addColumn(
                 'body',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                Table::TYPE_TEXT,
                 null,
                 [],
                 'Body'
             )
             ->addColumn(
                 'target_url',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                Table::TYPE_TEXT,
                 255,
                 [],
                 'Target Url'
             )
             ->addColumn(
                 'created_at',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+                Table::TYPE_TIMESTAMP,
                 null,
                 [],
                 'Created At'
             )
             ->addColumn(
                 'modified',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+                Table::TYPE_TIMESTAMP,
                 null,
                 [],
                 'Modified'

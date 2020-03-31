@@ -1,29 +1,28 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
  */
 declare(strict_types=1);
 
 namespace Tigren\CatalogGraphQl\Model\Graphql\Resolver\Category;
 
+use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\Layer;
-use Magento\Catalog\Model\Layer\FilterList;
 use Magento\Catalog\Model\Layer\Resolver;
-use Magento\CatalogSearch\Model\Layer\Filter\Attribute;
-use Magento\CatalogSearch\Model\Layer\Filter\Decimal;
-use Magento\CatalogSearch\Model\Layer\Filter\Price;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Escaper;
-use Magento\Framework\GraphQl\Query\ResolverInterface;
-use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Framework\GraphQl\Query\ResolverInterface;
+use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Search\Model\QueryFactory;
 use Magento\Swatches\Helper\Data as SwatchHelper;
+use Tigren\Core\Helper\Data as CoreHelper;
+use Magento\Catalog\Model\Layer\FilterList;
 
 /**
  * @inheritdoc
@@ -31,24 +30,7 @@ use Magento\Swatches\Helper\Data as SwatchHelper;
 class Filters implements ResolverInterface
 {
     /**
-     *
-     */
-    const CATEGORY_FILTER = 'category';
-    /**
-     *
-     */
-    const ATTRIBUTE_FILTER = 'attribute';
-    /**
-     *
-     */
-    const PRICE_FILTER = 'price';
-    /**
-     *
-     */
-    const DECIMAL_FILTER = 'decimal';
-
-    /**
-     * @var
+     * @var Resolver
      */
     protected $_layerResolver;
     /**
@@ -63,7 +45,6 @@ class Filters implements ResolverInterface
      * @var RequestInterface
      */
     protected $_request;
-    
     /**
      * @var Escaper
      */
@@ -73,26 +54,42 @@ class Filters implements ResolverInterface
      */
     protected $swatchHelper;
     /**
-     * @var array
+     * @var FilterList
      */
-    protected $filters = [
-        self::CATEGORY_FILTER => \Magento\CatalogSearch\Model\Layer\Filter\Category::class,
-        self::ATTRIBUTE_FILTER => Attribute::class,
-        self::PRICE_FILTER => Price::class,
-        self::DECIMAL_FILTER => Decimal::class,
-    ];
+    protected $filterList;
+    /**
+     * @var
+     */
+    protected $queryText;
+    /**
+     * @var
+     */
+    protected $layer;
+    /**
+     * @var QueryFactory
+     */
+    protected $queryFactory;
+    /**
+     * @var CoreHelper
+     */
+    private $coreHelper;
+    /**
+     * @var Config
+     */
+    private $configHelper;
+    /**
+     * @var
+     */
+    private $queryModel;
     /**
      * @var
      */
     private $_categoryId;
     /**
-     * @var
-     */
-    private $_category;
-    /**
      * @var array
      */
     private $data = [];
+
 
     /**
      * Filters constructor.
@@ -102,6 +99,9 @@ class Filters implements ResolverInterface
      * @param RequestInterface $request
      * @param Escaper $escaper
      * @param SwatchHelper $swatchHelper
+     * @param FilterList $filterList
+     * @param CoreHelper $coreHelper
+     * @param QueryFactory $queryFactory
      */
     public function __construct(
         Resolver $layerResolver,
@@ -109,14 +109,20 @@ class Filters implements ResolverInterface
         CategoryFactory $categoryFactory,
         RequestInterface $request,
         Escaper $escaper,
-        SwatchHelper $swatchHelper
+        SwatchHelper $swatchHelper,
+        FilterList $filterList,
+        CoreHelper $coreHelper,
+        QueryFactory $queryFactory
     ) {
-        $this->_layerResolver = $layerResolver->get();
+        $this->_layerResolver = $layerResolver;
         $this->categoryRepository = $categoryRepository;
         $this->categoryFactory = $categoryFactory;
         $this->_request = $request;
         $this->_escaper = $escaper;
         $this->swatchHelper = $swatchHelper;
+        $this->filterList = $filterList;
+        $this->coreHelper = $coreHelper;
+        $this->queryFactory = $queryFactory;
     }
 
     /**
@@ -125,46 +131,33 @@ class Filters implements ResolverInterface
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         $this->_categoryId = $this->_getCategoryId($value);
-
-        if (empty($value['model'])) {
+        if (empty($value['model']) ||
+            $value['model']->getData('display_mode') == Category::DM_PAGE
+        ) {
             return [];
         }
+        $this->setRequestParams($args);
 
-        $displayMode = $value['model']->getData('display_mode');
-        if ($displayMode && $displayMode != Category::DM_PRODUCT) {
-            return [];
+        $layerResolver = $this->getLayer();
+        $layerResolver->setCurrentCategory($this->_categoryId);
+        foreach ($this->filterList->getFilters($layerResolver) as $filter) {
+            $filter->apply($this->_request);
         }
+        $layerResolver->apply();
 
-        $request = $this->getRequest();
-        $params = $request->getParams();
-        $params['id'] = $this->_categoryId;
-        if (!empty($args['filter'])) {
-            foreach ($args['filter'] as $layerFilterInput) {
-                $params[$layerFilterInput['code']] = $layerFilterInput['value'];
-            }
-        }
-        $request->setParams($params);
-
-        $this->_layerResolver->setCurrentCategory($this->_categoryId);
-        $objectManager = ObjectManager::getInstance();
-        $fill = $objectManager->create('Magento\Catalog\Model\Layer\Category\FilterableAttributeList');
-        $filterList = new FilterList($objectManager, $fill, $this->filters);
-
-        $this->data['items'] = [];
-
-        foreach ($filterList->getFilters($this->_layerResolver) as $filter) {
-            $filter->apply($request);
-        }
-        $this->getLayer()->apply();
-
+        $rootCategoryId = $this->coreHelper->getRootCategoryId();
+        $items = [];
         $colorAttrs = ['fashion_color', 'color'];
-
-        foreach ($filterList->getFilters($this->_layerResolver) as $filter) {
+        foreach ($this->filterList->getFilters($layerResolver) as $filter) {
             $code = (string)$filter->getRequestVar();
+            if ($code == 'brand' && $this->_categoryId == $rootCategoryId) {
+                continue;
+            }
             $filterOption = [];
             $filterOption['class'] = get_class($filter);
             $filterOption['name'] = (string)$filter->getName();
             $filterOption['code'] = $code;
+            $filterOption['is_multiselect'] = $this->isMultiSelect($filter, $code);
             $filterOption['items'] = [];
 
             foreach ($filter->getItems() as $item) {
@@ -173,20 +166,24 @@ class Filters implements ResolverInterface
                     'name' => htmlspecialchars_decode(gettype($item->getLabel()) === 'object'
                         ? $item->getLabel()->render() : $item->getLabel()),
                     'count' => $item->getCount(),
-                    'text' => in_array($code, $colorAttrs) ? $this->getAtributeSwatchHashcode($item->getValue()) : ''
+                    'text' => in_array(
+                        $code,
+                        $colorAttrs
+                    ) ? $this->getAtributeSwatchHashcode($item->getValue()) : ''
                 ];
             }
             if (!empty($filterOption['items'])) {
-                $this->data['items'][] = $filterOption;
+                $items[] = $filterOption;
             }
         }
-        $this->data['items'] = $this->data['items'] ?? null;
-
-        return $this->data;
+        $result = [
+            'items' => $items ?: null
+        ];
+        return $result;
     }
 
     /**
-     * @param array $args
+     * @param array $value
      * @return int
      * @throws GraphQlInputException
      */
@@ -200,13 +197,22 @@ class Filters implements ResolverInterface
     }
 
     /**
-     * Get request
-     *
-     * @return RequestInterface
+     * @param $args
      */
-    private function getRequest()
+    protected function setRequestParams($args)
     {
-        return $this->_request;
+        $params = $this->_request->getParams();
+        $params['id'] = $this->_categoryId;
+        if (!empty($args['filter'])) {
+            foreach ($args['filter'] as $layerFilterInput) {
+                if ($layerFilterInput['code'] == 'query') {
+                    $this->queryText = $layerFilterInput['value'];
+                } else {
+                    $params[$layerFilterInput['code']] = $layerFilterInput['value'];
+                }
+            }
+        }
+        $this->_request->setParams($params);
     }
 
     /**
@@ -216,12 +222,30 @@ class Filters implements ResolverInterface
      */
     private function getLayer()
     {
-        return $this->_layerResolver;
+        if (!$this->layer) {
+            if ($this->queryText) {
+                $this->_layerResolver->create(Resolver::CATALOG_LAYER_SEARCH);
+                $this->_request->setParam('q', $this->queryText);
+                $this->queryModel = $this->queryFactory->get();
+            }
+            $this->layer = $this->_layerResolver->get();
+        }
+        return $this->layer;
+    }
+
+    /**
+     * @param $filter
+     * @param $code
+     * @return bool
+     */
+    public function isMultiSelect($filter, $code)
+    {
+        return false;
     }
 
     /**
      * @param $optionId
-     * @return |null
+     * @return string|null
      */
     public function getAtributeSwatchHashcode($optionId)
     {
@@ -229,14 +253,4 @@ class Filters implements ResolverInterface
         return $hashcodeData[$optionId]['value'] ?? null;
     }
 
-    /**
-     * @return mixed
-     */
-    protected function getCategory()
-    {
-        if (!$this->_category) {
-            $this->_category = $this->_productFactory->create()->load($this->_productId);
-        }
-        return $this->_category;
-    }
 }

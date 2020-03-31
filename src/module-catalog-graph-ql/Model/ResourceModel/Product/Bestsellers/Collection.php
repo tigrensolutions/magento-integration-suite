@@ -1,13 +1,24 @@
 <?php
+/**
+ * @author    Tigren Solutions <info@tigren.com>
+ * @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Tigren\CatalogGraphQl\Model\ResourceModel\Product\Bestsellers;
 
+use Magento\Sales\Model\Order;
+
+/**
+ * Class Collection
+ * @package Tigren\CatalogGraphQl\Model\ResourceModel\Product\Bestsellers
+ */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
     /**
      * Init Select
      *
-     * @return \Magento\Catalog\Model\ResourceModel\Product\Collection
+     * @return Collection
      */
     protected function _initSelect()
     {
@@ -16,12 +27,15 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     protected function joinOrderedQty()
     {
         $connection = $this->getConnection();
         $orderJoinCondition = [
             'order.entity_id = order_items.order_id',
-            $connection->quoteInto("order.state <> ?", \Magento\Sales\Model\Order::STATE_CANCELED),
+            $connection->quoteInto("order.state <> ?", Order::STATE_CANCELED),
         ];
 
         $this->getSelect()->join(
@@ -43,5 +57,4 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         return $this;
     }
-
 }

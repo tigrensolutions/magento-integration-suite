@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+  ~ @author    Tigren Solutions <info@tigren.com>
+  ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
+  ~ @license   Open Software License ("OSL") v. 3.0
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Tigren\CatalogGraphQl\Api\GuestCartRepositoryInterface"
+                type="Tigren\CatalogGraphQl\Model\GuestCartRepository"/>
+    <preference for="Tigren\CatalogGraphQl\Api\CartRepositoryInterface"
+                type="Tigren\CatalogGraphQl\Model\CartRepository"/>
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Product\MediaGallery\Url">
+        <plugin name="pwa_products_image"
+                type="Tigren\CatalogGraphQl\Plugin\GraphQL\Resolver\Product\MediaGallery\Url"/>
+    </type>
+
+    <virtualType name="searchFilterList" type="Magento\Catalog\Model\Layer\FilterList">
+        <arguments>
+            <argument name="filterableAttributes"
+                      xsi:type="object">Magento\Catalog\Model\Layer\Category\FilterableAttributeList
+            </argument>
+            <argument name="filters" xsi:type="array">
+                <item name="attribute" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Attribute</item>
+                <item name="price" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Price</item>
+                <item name="decimal" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Decimal</item>
+                <item name="category" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Category</item>
+            </argument>
+            <argument name="place" xsi:type="string">sidebar</argument>
+        </arguments>
+    </virtualType>
+    <type name="Tigren\CatalogGraphQl\Model\Graphql\Resolver\Category\Filters">
+        <arguments>
+            <argument name="filterList" xsi:type="object">searchFilterList</argument>
+        </arguments>
+    </type>
+    <!-- ignore magento catalog-graphql layer search -->
+    <type name="Magento\Catalog\Model\Layer\Search">
+        <arguments>
+            <argument name="context" xsi:type="object">Magento\Elasticsearch\Model\Layer\Search\Context</argument>
+        </arguments>
+    </type>
+</config>

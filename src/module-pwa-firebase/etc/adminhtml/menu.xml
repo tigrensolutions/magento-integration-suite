@@ -1,15 +1,19 @@
 <?xml version="1.0"?>
 <!--
-  ~ @author Tigren Solutions <info@tigren.com>
+  ~ @author    Tigren Solutions <info@tigren.com>
   ~ @copyright Copyright (c) 2019 Tigren Solutions <https://www.tigren.com>. All rights reserved.
-  ~ @license Open Software License ("OSL") v. 3.0
+  ~ @license   Open Software License ("OSL") v. 3.0
   -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="Tigren_ProgressiveWebApp::pwa" title="Progressive Web App" module="Tigren_ProgressiveWebApp" resource="Tigren_ProgressiveWebApp::pwa" sortOrder="20"/>
-        <add id="Tigren_ProgressiveWebApp::notification" title="Manage Notifications" module="Tigren_ProgressiveWebApp" sortOrder="30" action="progressivewebapp/notification"
+        <add id="Tigren_ProgressiveWebApp::pwa" title="Progressive Web App" module="Tigren_ProgressiveWebApp"
+             resource="Tigren_ProgressiveWebApp::pwa" sortOrder="20"/>
+        <add id="Tigren_ProgressiveWebApp::notification" title="Manage Notifications" module="Tigren_ProgressiveWebApp"
+             sortOrder="30" action="progressivewebapp/notification"
              parent="Tigren_ProgressiveWebApp::pwa" resource="Tigren_ProgressiveWebApp::notification"/>
-        <add id="Tigren_ProgressiveWebApp::settings" title="Settings" module="Tigren_ProgressiveWebApp" sortOrder="40" action="adminhtml/system_config/edit/section/progressivewebapp"
+        <add id="Tigren_ProgressiveWebApp::settings" title="Settings" module="Tigren_ProgressiveWebApp" sortOrder="40"
+             action="adminhtml/system_config/edit/section/progressivewebapp"
              parent="Tigren_ProgressiveWebApp::pwa" resource="Tigren_ProgressiveWebApp::settings"/>
     </menu>
 </config>
