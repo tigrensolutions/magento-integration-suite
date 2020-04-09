@@ -1,7 +1,7 @@
 type Query {
     order (
         id: Int! @doc(description: "Id of the order")
-    ): CustomOrder
+    ): CustomerOrder
     @resolver(class: "Tigren\\CustomerGraphQl\\Model\\Resolver\\Sales\\Order")
     addresses_list (
         pageSize : Int = 10,
@@ -26,10 +26,6 @@ type Mutation {
 type Message {
     type : String @doc(description: "The type of message")
     text : String @doc(description: "The content of message")
-}
-
-type CustomOrder {
-    increment_id: String @doc(description: "The increment id of the order")
 }
 
 type Customer @doc(description: "Customer defines the customer other details") {
